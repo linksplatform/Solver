@@ -1,5 +1,15 @@
-    Finished dev [unoptimized + debuginfo] target(s) in 0.01s
-     Running `target/debug/solver`
-1: 1 2
-2: 1 1
-delete: 2: 1 1 => 0: 0 0
+   Compiling solver v0.1.0 (/home/konard/Archive/Code/Links/Solver)
+error[E0106]: missing lifetime specifier
+  --> src/main.rs:45:141
+   |
+45 | ...s>(store: &mut TStore, sequence: &[TLinkAddress], start_at: u64, stop_at: u64) -> Result<&[TLinkAddress], doublets::Error<TLinkAddress>>
+   |              -----------            ---------------                                         ^ expected named lifetime parameter
+   |
+   = help: this function's return type contains a borrowed value, but the signature does not say whether it is borrowed from `store` or `sequence`
+help: consider introducing a named lifetime parameter
+   |
+45 | fn create_all_sequence_variants<'a, TStore, TLinkAddress>(store: &'a mut TStore, sequence: &'a [TLinkAddress], start_at: u64, stop_at: u64) -> Result<&'a [TLinkAddress], doublets::Error<TLinkAddress>>
+   |                                 +++                               ++                        ++                                                         ++
+
+For more information about this error, try `rustc --explain E0106`.
+error: could not compile `solver` due to previous error

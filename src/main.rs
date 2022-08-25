@@ -1,12 +1,73 @@
 use doublets::{data, mem, unit, Doublets, Links};
 use doublets::DoubletsExt;
 
-fn create_all_sequence_variants<TStore, TLinkAddress>(store: &mut TStore, sequence: &[TLinkAddress]) -> Result<TLinkAddress, doublets::Error<TLinkAddress>>
+//         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+//         private ulong[] CreateAllVariants2Core(ulong[] sequence, ulong startAt, ulong stopAt)
+//         {
+//             if ((stopAt - startAt) == 0)
+//             {
+//                 return new[] { sequence[startAt] };
+//             }
+//             if ((stopAt - startAt) == 1)
+//             {
+//                 return new[] { Links.Unsync.GetOrCreate(sequence[startAt], sequence[stopAt]) };
+//             }
+//             var variants = new ulong[Platform.Numbers.Math.Catalan(stopAt - startAt)];
+//             var last = 0;
+//             for (var splitter = startAt; splitter < stopAt; splitter++)
+//             {
+//                 var left = CreateAllVariants2Core(sequence, startAt, splitter);
+//                 var right = CreateAllVariants2Core(sequence, splitter + 1, stopAt);
+//                 for (var i = 0; i < left.Length; i++)
+//                 {
+//                     for (var j = 0; j < right.Length; j++)
+//                     {
+//                         var variant = Links.Unsync.GetOrCreate(left[i], right[j]);
+//                         if (variant == Constants.Null)
+//                         {
+//                             throw new NotImplementedException("Creation cancellation is not implemented.");
+//                         }
+//                         variants[last++] = variant;
+//                     }
+//                 }
+//             }
+//             return variants;
+//         }
+
+// catalan numbers
+static CATALAN_NUMBERS: [u64; 21] = [
+    1, 1, 2, 5, 14, 42, 132, 429, 1430, 4862, 16796, 58786, 208012, 742900, 2674440, 9694845, 35357670, 129644790, 477638700, 1767263190, 6564120420, 24466267020, 91482563640, 343059613650, 1289904147324];
+
+fn catalan_number(n: u64) -> u64 {
+    CATALAN_NUMBERS[n as usize]
+}
+
+fn create_all_sequence_variants<TStore, TLinkAddress>(store: &mut TStore, sequence: &[TLinkAddress], start_at: u64, stop_at: u64) -> Result<&[TLinkAddress], doublets::Error<TLinkAddress>>
 where
     TLinkAddress: doublets::data::LinkType,
     TStore: Doublets<TLinkAddress>,
 {
-    store.get_or_create(sequence[0], sequence[1])
+    if stop_at - start_at == 0 {
+        return Ok(&sequence[start_at]);
+    }
+    if stop_at - start_at == 1 {
+        return Ok(&[store.get_or_create(sequence[start_at], sequence[stop_at])]);
+    }
+    let mut variants = Vec::with_capacity(catalan_number(stop_at - start_at) as usize);
+    for splitter in start_at..stop_at {
+        let left = create_all_sequence_variants(store, sequence, start_at, splitter)?;
+        let right = create_all_sequence_variants(store, sequence, splitter + 1, stop_at)?;
+        for i in 0..left.len() {
+            for j in 0..right.len() {
+                let variant = store.get_or_create(left[i], right[j]);
+                if variant == TLinkAddress::funty(0) {
+                    return Err(doublets::Error::CreationCancelled);
+                }
+                variants.push(variant);
+            }
+        }
+    }
+    Ok(&variants)
 }
 
 fn main() -> Result<(), doublets::Error<usize>> {
@@ -34,7 +95,7 @@ fn main() -> Result<(), doublets::Error<usize>> {
         })
         .map(|_| ())?;
 
-    create_all_sequence_variants(&mut store, &[1, 2])?;
+    create_all_sequence_variants(&mut store, &[1, 2], 0, 1)?;
 
     Ok(())
 }
