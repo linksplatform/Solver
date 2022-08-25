@@ -1,13 +1,21 @@
 use doublets::{data, mem, unit, Doublets, Links};
 use doublets::DoubletsExt;
 
+fn create_all_sequence_variants<TStore, TLinkAddress>(store: &mut TStore, sequence: &[TLinkAddress]) -> Result<TLinkAddress, doublets::Error<TLinkAddress>>
+where
+    TLinkAddress: doublets::data::LinkType,
+    TStore: Doublets<TLinkAddress>,
+{
+    store.get_or_create(sequence[0], sequence[1])
+}
+
 fn main() -> Result<(), doublets::Error<usize>> {
     // use file as memory for doublets
     let mem = mem::FileMapped::from_path("db.links")?;
     let mut store = unit::Store::<usize, _>::new(mem)?;
 
     // create 1: 1 1 - it's point: link where source and target it self
-    let mut point = store.create_link(1, 1)?;
+    let point = store.create_link(1, 1)?;
 
     // `any` constant denotes any link
     let any = store.constants().any;
@@ -24,5 +32,9 @@ fn main() -> Result<(), doublets::Error<usize>> {
             // track issue: https://github.com/linksplatform/doublets-rs/issues/4
             data::Flow::Continue
         })
-        .map(|_| ())
+        .map(|_| ())?;
+
+    create_all_sequence_variants(&mut store, &[1, 2])?;
+
+    Ok(())
 }
