@@ -1,4 +1,4 @@
-use doublets::{data, mem, unit, Doublets, Links};
+use doublets::{mem, unit, Doublets, Links};
 use doublets::DoubletsExt;
 
 //         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -48,10 +48,10 @@ where
     TStore: Doublets<TLinkAddress>,
 {
     if stop_at - start_at == 0 {
-        return Ok(sequence[start_at]);
+        return Ok(sequence[start_at].to_vec());
     }
     if stop_at - start_at == 1 {
-        return Ok([store.get_or_create(sequence[start_at], sequence[stop_at])]);
+        return Ok([store.get_or_create(sequence[start_at], sequence[stop_at])].to_vec());
     }
     let mut variants = Vec::with_capacity(catalan_number(stop_at - start_at) as usize);
     for splitter in start_at..stop_at {
@@ -67,7 +67,7 @@ where
             }
         }
     }
-    Ok(variants)
+    Ok(variants.to_vec())
 }
 
 fn main() -> Result<(), doublets::Error<usize>> {
@@ -75,8 +75,7 @@ fn main() -> Result<(), doublets::Error<usize>> {
     let mem = mem::FileMapped::from_path("db.links")?;
     let mut store = unit::Store::<usize, _>::new(mem)?;
 
-    // create 1: 1 1 - it's point: link where source and target it self
-    let point = store.create_link(1, 1)?;
+    create_all_sequence_variants(&mut store, &[1, 2], 0, 1)?;
 
     // `any` constant denotes any link
     let any = store.constants().any;
@@ -85,17 +84,6 @@ fn main() -> Result<(), doublets::Error<usize>> {
     store.each_iter([any, any, any]).for_each(|link| {
         println!("{link:?}");
     });
-
-    // delete point with handler (Link, Link)
-    store
-        .delete_with(point, |before, after| {
-            println!("delete: {before:?} => {after:?}");
-            // track issue: https://github.com/linksplatform/doublets-rs/issues/4
-            data::Flow::Continue
-        })
-        .map(|_| ())?;
-
-    create_all_sequence_variants(&mut store, &[1, 2], 0, 1)?;
 
     Ok(())
 }
