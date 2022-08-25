@@ -1,20 +1,20 @@
-   Compiling Solver v0.1.0 (/home/konard/Archive/Code/Links/Solver)
-error[E0599]: no method named `each_iter` found for struct `doublets::unit::Store` in the current scope
-   --> src/main.rs:15:11
-    |
-15  |     store.each_iter([any, any, any]).for_each(|link| {
-    |           ^^^^^^^^^ method not found in `doublets::unit::Store<usize, FileMapped<LinkPart<usize>>>`
-    |
-   ::: /home/konard/.cargo/git/checkouts/doublets-rs-3835f06948971044/39454b5/doublets/src/data/traits.rs:617:8
-    |
-617 |     fn each_iter(&self, query: impl ToQuery<T>) -> Self::ImplIterEach;
-    |        --------- the method is available for `doublets::unit::Store<usize, FileMapped<LinkPart<usize>>>` here
-    |
-    = help: items from traits can only be used if the trait is in scope
-help: the following trait is implemented but not in scope; perhaps add a `use` for it:
-    |
-1   | use doublets::DoubletsExt;
-    |
+warning: variable does not need to be mutable
+  --> src/main.rs:10:9
+   |
+10 |     let mut point = store.create_link(1, 1)?;
+   |         ----^^^^^
+   |         |
+   |         help: remove this `mut`
+   |
+   = note: `#[warn(unused_mut)]` on by default
 
-For more information about this error, try `rustc --explain E0599`.
-error: could not compile `Solver` due to previous error
+warning: crate `Solver` should have a snake case name
+  |
+  = note: `#[warn(non_snake_case)]` on by default
+  = help: convert the identifier to snake case: `solver`
+
+warning: `Solver` (bin "Solver") generated 2 warnings
+    Finished dev [unoptimized + debuginfo] target(s) in 0.01s
+     Running `target/debug/Solver`
+1: 1 1
+delete: 1: 1 1 => 0: 0 0

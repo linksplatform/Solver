@@ -1,4 +1,5 @@
 use doublets::{data, mem, unit, Doublets, Links};
+use doublets::DoubletsExt;
 
 fn main() -> Result<(), doublets::Error<usize>> {
     // use file as memory for doublets
