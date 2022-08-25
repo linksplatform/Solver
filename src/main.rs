@@ -48,10 +48,10 @@ where
     TStore: Doublets<TLinkAddress>,
 {
     if stop_at - start_at == 0 {
-        return Ok(&sequence[start_at]);
+        return Ok(sequence[start_at]);
     }
     if stop_at - start_at == 1 {
-        return Ok(&[store.get_or_create(sequence[start_at], sequence[stop_at])]);
+        return Ok([store.get_or_create(sequence[start_at], sequence[stop_at])]);
     }
     let mut variants = Vec::with_capacity(catalan_number(stop_at - start_at) as usize);
     for splitter in start_at..stop_at {
@@ -67,7 +67,7 @@ where
             }
         }
     }
-    Ok(&variants)
+    Ok(variants)
 }
 
 fn main() -> Result<(), doublets::Error<usize>> {
