@@ -35,23 +35,23 @@ use doublets::DoubletsExt;
 //         }
 
 // catalan numbers
-static CATALAN_NUMBERS: [u64; 21] = [
+static CATALAN_NUMBERS: [usize; 25] = [
     1, 1, 2, 5, 14, 42, 132, 429, 1430, 4862, 16796, 58786, 208012, 742900, 2674440, 9694845, 35357670, 129644790, 477638700, 1767263190, 6564120420, 24466267020, 91482563640, 343059613650, 1289904147324];
 
-fn catalan_number(n: u64) -> u64 {
-    CATALAN_NUMBERS[n as usize]
+fn catalan_number(n: usize) -> usize {
+    CATALAN_NUMBERS[n]
 }
 
-fn create_all_sequence_variants<TStore, TLinkAddress>(store: &mut TStore, sequence: &[TLinkAddress], start_at: u64, stop_at: u64) -> Result<&[TLinkAddress], doublets::Error<TLinkAddress>>
+fn create_all_sequence_variants<TStore, TLinkAddress>(store: &mut TStore, sequence: &[TLinkAddress], start_at: usize, stop_at: usize) -> Result<Vec<TLinkAddress>, doublets::Error<TLinkAddress>>
 where
     TLinkAddress: doublets::data::LinkType,
     TStore: Doublets<TLinkAddress>,
 {
     if stop_at - start_at == 0 {
-        return Ok(sequence[start_at].to_vec());
+        return Ok([sequence[start_at]].to_vec());
     }
     if stop_at - start_at == 1 {
-        return Ok([store.get_or_create(sequence[start_at], sequence[stop_at])].to_vec());
+        return Ok([store.get_or_create(sequence[start_at], sequence[stop_at])?].to_vec());
     }
     let mut variants = Vec::with_capacity(catalan_number(stop_at - start_at) as usize);
     for splitter in start_at..stop_at {
@@ -59,15 +59,15 @@ where
         let right = create_all_sequence_variants(store, sequence, splitter + 1, stop_at)?;
         for i in 0..left.len() {
             for j in 0..right.len() {
-                let variant = store.get_or_create(left[i], right[j]);
-                if variant == TLinkAddress::funty(0) {
-                    return Err(doublets::Error::CreationCancelled);
-                }
+                let variant = store.get_or_create(left[i], right[j])?;
+                // if variant == TLinkAddress::funty(0) {
+                //     return Err(doublets::Error::CreationCancelled);
+                // }
                 variants.push(variant);
             }
         }
     }
-    Ok(variants.to_vec())
+    Ok(variants)
 }
 
 fn main() -> Result<(), doublets::Error<usize>> {
