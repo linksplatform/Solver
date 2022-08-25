@@ -75,7 +75,19 @@ fn main() -> Result<(), doublets::Error<usize>> {
     let mem = mem::FileMapped::from_path("db.links")?;
     let mut store = unit::Store::<usize, _>::new(mem)?;
 
-    create_all_sequence_variants(&mut store, &[1, 2], 0, 1)?;
+    // Create a vector of N points using loop
+    let n = 15;
+    let mut sequence = Vec::with_capacity(n);
+    for _ in 0..n {
+        sequence.push(store.create_point()?);
+    }
+
+    create_all_sequence_variants(
+        &mut store,
+        &sequence,
+        0,
+        n - 1
+    )?;
 
     // `any` constant denotes any link
     let any = store.constants().any;
