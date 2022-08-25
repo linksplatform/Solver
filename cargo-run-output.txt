@@ -8,13 +8,8 @@ warning: variable does not need to be mutable
    |
    = note: `#[warn(unused_mut)]` on by default
 
-warning: crate `Solver` should have a snake case name
-  |
-  = note: `#[warn(non_snake_case)]` on by default
-  = help: convert the identifier to snake case: `solver`
-
-warning: `Solver` (bin "Solver") generated 2 warnings
-    Finished dev [unoptimized + debuginfo] target(s) in 0.01s
-     Running `target/debug/Solver`
+warning: `solver` (bin "solver") generated 1 warning
+    Finished dev [unoptimized + debuginfo] target(s) in 0.02s
+     Running `target/debug/solver`
 1: 1 1
 delete: 1: 1 1 => 0: 0 0
