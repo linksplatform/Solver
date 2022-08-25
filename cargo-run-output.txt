@@ -1,0 +1,669 @@
+   Compiling doublets v0.1.0-pre+beta.15
+error[E0277]: the trait bound `T: funty::Unsigned` is not satisfied
+   --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/doublets-0.1.0-pre+beta.15/src/data/traits.rs:672:28
+    |
+672 |     fn constants(&self) -> &LinksConstants<T> {
+    |                            ^^^^^^^^^^^^^^^^^^ the trait `funty::Unsigned` is not implemented for `T`
+    |
+    = note: required because of the requirements on the impl of `platform_data::LinkType` for `T`
+note: required by a bound in `LinksConstants`
+   --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/platform-data-0.1.0-beta.3/src/constants.rs:8:30
+    |
+8   | pub struct LinksConstants<T: LinkType> {
+    |                              ^^^^^^^^ required by this bound in `LinksConstants`
+help: consider further restricting this bound
+    |
+671 | impl<T: LinkType + funty::Unsigned, All: Doublets<T> + ?Sized> Links<T> for Box<All> {
+    |                  +++++++++++++++++
+
+error[E0277]: the trait bound `T: From<u8>` is not satisfied
+   --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/doublets-0.1.0-pre+beta.15/src/data/traits.rs:672:28
+    |
+672 |     fn constants(&self) -> &LinksConstants<T> {
+    |                            ^^^^^^^^^^^^^^^^^^ the trait `From<u8>` is not implemented for `T`
+    |
+    = note: required because of the requirements on the impl of `Into<T>` for `u8`
+    = note: required because of the requirements on the impl of `TryFrom<u8>` for `T`
+    = note: required because of the requirements on the impl of `platform_data::link_type::FuntyPart` for `T`
+    = note: required because of the requirements on the impl of `platform_data::LinkType` for `T`
+note: required by a bound in `LinksConstants`
+   --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/platform-data-0.1.0-beta.3/src/constants.rs:8:30
+    |
+8   | pub struct LinksConstants<T: LinkType> {
+    |                              ^^^^^^^^ required by this bound in `LinksConstants`
+help: consider further restricting this bound
+    |
+671 | impl<T: LinkType + std::convert::From<u8>, All: Doublets<T> + ?Sized> Links<T> for Box<All> {
+    |                  ++++++++++++++++++++++++
+
+error[E0277]: the trait bound `T: funty::Unsigned` is not satisfied
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/doublets-0.1.0-pre+beta.15/src/data/traits.rs:20:28
+   |
+20 |     fn constants(&self) -> &LinksConstants<T>;
+   |                            ^^^^^^^^^^^^^^^^^^ the trait `funty::Unsigned` is not implemented for `T`
+   |
+   = note: required because of the requirements on the impl of `platform_data::LinkType` for `T`
+note: required by a bound in `LinksConstants`
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/platform-data-0.1.0-beta.3/src/constants.rs:8:30
+   |
+8  | pub struct LinksConstants<T: LinkType> {
+   |                              ^^^^^^^^ required by this bound in `LinksConstants`
+help: consider further restricting this bound
+   |
+19 | pub trait Links<T: LinkType + funty::Unsigned>: Send + Sync {
+   |                             +++++++++++++++++
+
+error[E0277]: the trait bound `T: From<u8>` is not satisfied
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/doublets-0.1.0-pre+beta.15/src/data/traits.rs:20:28
+   |
+20 |     fn constants(&self) -> &LinksConstants<T>;
+   |                            ^^^^^^^^^^^^^^^^^^ the trait `From<u8>` is not implemented for `T`
+   |
+   = note: required because of the requirements on the impl of `Into<T>` for `u8`
+   = note: required because of the requirements on the impl of `TryFrom<u8>` for `T`
+   = note: required because of the requirements on the impl of `platform_data::link_type::FuntyPart` for `T`
+   = note: required because of the requirements on the impl of `platform_data::LinkType` for `T`
+note: required by a bound in `LinksConstants`
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/platform-data-0.1.0-beta.3/src/constants.rs:8:30
+   |
+8  | pub struct LinksConstants<T: LinkType> {
+   |                              ^^^^^^^^ required by this bound in `LinksConstants`
+help: consider further restricting this bound
+   |
+19 | pub trait Links<T: LinkType + std::convert::From<u8>>: Send + Sync {
+   |                             ++++++++++++++++++++++++
+
+error[E0277]: the trait bound `T: funty::Unsigned` is not satisfied
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/doublets-0.1.0-pre+beta.15/src/mem/split/generic/external_recursion_less_base.rs:24:20
+   |
+24 |         constants: LinksConstants<T>,
+   |                    ^^^^^^^^^^^^^^^^^ the trait `funty::Unsigned` is not implemented for `T`
+   |
+   = note: required because of the requirements on the impl of `platform_data::LinkType` for `T`
+note: required by a bound in `LinksConstants`
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/platform-data-0.1.0-beta.3/src/constants.rs:8:30
+   |
+8  | pub struct LinksConstants<T: LinkType> {
+   |                              ^^^^^^^^ required by this bound in `LinksConstants`
+help: consider further restricting this bound
+   |
+22 | impl<T: LinkType + funty::Unsigned> ExternalRecursionlessSizeBalancedTreeBase<T> {
+   |                  +++++++++++++++++
+
+error[E0277]: the trait bound `T: From<u8>` is not satisfied
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/doublets-0.1.0-pre+beta.15/src/mem/split/generic/external_recursion_less_base.rs:24:20
+   |
+24 |         constants: LinksConstants<T>,
+   |                    ^^^^^^^^^^^^^^^^^ the trait `From<u8>` is not implemented for `T`
+   |
+   = note: required because of the requirements on the impl of `Into<T>` for `u8`
+   = note: required because of the requirements on the impl of `TryFrom<u8>` for `T`
+   = note: required because of the requirements on the impl of `platform_data::link_type::FuntyPart` for `T`
+   = note: required because of the requirements on the impl of `platform_data::LinkType` for `T`
+note: required by a bound in `LinksConstants`
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/platform-data-0.1.0-beta.3/src/constants.rs:8:30
+   |
+8  | pub struct LinksConstants<T: LinkType> {
+   |                              ^^^^^^^^ required by this bound in `LinksConstants`
+help: consider further restricting this bound
+   |
+22 | impl<T: LinkType + std::convert::From<u8>> ExternalRecursionlessSizeBalancedTreeBase<T> {
+   |                  ++++++++++++++++++++++++
+
+error[E0277]: the trait bound `T: funty::Unsigned` is not satisfied
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/doublets-0.1.0-pre+beta.15/src/mem/split/generic/external_sources_recursion_less_tree.rs:30:20
+   |
+30 |         constants: LinksConstants<T>,
+   |                    ^^^^^^^^^^^^^^^^^ the trait `funty::Unsigned` is not implemented for `T`
+   |
+   = note: required because of the requirements on the impl of `platform_data::LinkType` for `T`
+note: required by a bound in `LinksConstants`
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/platform-data-0.1.0-beta.3/src/constants.rs:8:30
+   |
+8  | pub struct LinksConstants<T: LinkType> {
+   |                              ^^^^^^^^ required by this bound in `LinksConstants`
+help: consider further restricting this bound
+   |
+28 | impl<T: LinkType + funty::Unsigned> ExternalSourcesRecursionlessTree<T> {
+   |                  +++++++++++++++++
+
+error[E0277]: the trait bound `T: From<u8>` is not satisfied
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/doublets-0.1.0-pre+beta.15/src/mem/split/generic/external_sources_recursion_less_tree.rs:30:20
+   |
+30 |         constants: LinksConstants<T>,
+   |                    ^^^^^^^^^^^^^^^^^ the trait `From<u8>` is not implemented for `T`
+   |
+   = note: required because of the requirements on the impl of `Into<T>` for `u8`
+   = note: required because of the requirements on the impl of `TryFrom<u8>` for `T`
+   = note: required because of the requirements on the impl of `platform_data::link_type::FuntyPart` for `T`
+   = note: required because of the requirements on the impl of `platform_data::LinkType` for `T`
+note: required by a bound in `LinksConstants`
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/platform-data-0.1.0-beta.3/src/constants.rs:8:30
+   |
+8  | pub struct LinksConstants<T: LinkType> {
+   |                              ^^^^^^^^ required by this bound in `LinksConstants`
+help: consider further restricting this bound
+   |
+28 | impl<T: LinkType + std::convert::From<u8>> ExternalSourcesRecursionlessTree<T> {
+   |                  ++++++++++++++++++++++++
+
+error[E0277]: the trait bound `T: funty::Unsigned` is not satisfied
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/doublets-0.1.0-pre+beta.15/src/mem/split/generic/external_targets_recursion_less_tree.rs:28:20
+   |
+28 |         constants: LinksConstants<T>,
+   |                    ^^^^^^^^^^^^^^^^^ the trait `funty::Unsigned` is not implemented for `T`
+   |
+   = note: required because of the requirements on the impl of `platform_data::LinkType` for `T`
+note: required by a bound in `LinksConstants`
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/platform-data-0.1.0-beta.3/src/constants.rs:8:30
+   |
+8  | pub struct LinksConstants<T: LinkType> {
+   |                              ^^^^^^^^ required by this bound in `LinksConstants`
+help: consider further restricting this bound
+   |
+26 | impl<T: LinkType + funty::Unsigned> ExternalTargetsRecursionlessTree<T> {
+   |                  +++++++++++++++++
+
+error[E0277]: the trait bound `T: From<u8>` is not satisfied
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/doublets-0.1.0-pre+beta.15/src/mem/split/generic/external_targets_recursion_less_tree.rs:28:20
+   |
+28 |         constants: LinksConstants<T>,
+   |                    ^^^^^^^^^^^^^^^^^ the trait `From<u8>` is not implemented for `T`
+   |
+   = note: required because of the requirements on the impl of `Into<T>` for `u8`
+   = note: required because of the requirements on the impl of `TryFrom<u8>` for `T`
+   = note: required because of the requirements on the impl of `platform_data::link_type::FuntyPart` for `T`
+   = note: required because of the requirements on the impl of `platform_data::LinkType` for `T`
+note: required by a bound in `LinksConstants`
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/platform-data-0.1.0-beta.3/src/constants.rs:8:30
+   |
+8  | pub struct LinksConstants<T: LinkType> {
+   |                              ^^^^^^^^ required by this bound in `LinksConstants`
+help: consider further restricting this bound
+   |
+26 | impl<T: LinkType + std::convert::From<u8>> ExternalTargetsRecursionlessTree<T> {
+   |                  ++++++++++++++++++++++++
+
+error[E0277]: the trait bound `T: funty::Unsigned` is not satisfied
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/doublets-0.1.0-pre+beta.15/src/mem/split/generic/internal_recursion_less_base.rs:24:20
+   |
+24 |         constants: LinksConstants<T>,
+   |                    ^^^^^^^^^^^^^^^^^ the trait `funty::Unsigned` is not implemented for `T`
+   |
+   = note: required because of the requirements on the impl of `platform_data::LinkType` for `T`
+note: required by a bound in `LinksConstants`
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/platform-data-0.1.0-beta.3/src/constants.rs:8:30
+   |
+8  | pub struct LinksConstants<T: LinkType> {
+   |                              ^^^^^^^^ required by this bound in `LinksConstants`
+help: consider further restricting this bound
+   |
+22 | impl<T: LinkType + funty::Unsigned> InternalRecursionlessSizeBalancedTreeBase<T> {
+   |                  +++++++++++++++++
+
+error[E0277]: the trait bound `T: From<u8>` is not satisfied
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/doublets-0.1.0-pre+beta.15/src/mem/split/generic/internal_recursion_less_base.rs:24:20
+   |
+24 |         constants: LinksConstants<T>,
+   |                    ^^^^^^^^^^^^^^^^^ the trait `From<u8>` is not implemented for `T`
+   |
+   = note: required because of the requirements on the impl of `Into<T>` for `u8`
+   = note: required because of the requirements on the impl of `TryFrom<u8>` for `T`
+   = note: required because of the requirements on the impl of `platform_data::link_type::FuntyPart` for `T`
+   = note: required because of the requirements on the impl of `platform_data::LinkType` for `T`
+note: required by a bound in `LinksConstants`
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/platform-data-0.1.0-beta.3/src/constants.rs:8:30
+   |
+8  | pub struct LinksConstants<T: LinkType> {
+   |                              ^^^^^^^^ required by this bound in `LinksConstants`
+help: consider further restricting this bound
+   |
+22 | impl<T: LinkType + std::convert::From<u8>> InternalRecursionlessSizeBalancedTreeBase<T> {
+   |                  ++++++++++++++++++++++++
+
+error[E0277]: the trait bound `T: funty::Unsigned` is not satisfied
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/doublets-0.1.0-pre+beta.15/src/mem/split/generic/internal_sources_linked_list.rs:25:20
+   |
+25 |         constants: LinksConstants<T>,
+   |                    ^^^^^^^^^^^^^^^^^ the trait `funty::Unsigned` is not implemented for `T`
+   |
+   = note: required because of the requirements on the impl of `platform_data::LinkType` for `T`
+note: required by a bound in `LinksConstants`
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/platform-data-0.1.0-beta.3/src/constants.rs:8:30
+   |
+8  | pub struct LinksConstants<T: LinkType> {
+   |                              ^^^^^^^^ required by this bound in `LinksConstants`
+help: consider further restricting this bound
+   |
+23 | impl<T: LinkType + funty::Unsigned> InternalSourcesLinkedList<T> {
+   |                  +++++++++++++++++
+
+error[E0277]: the trait bound `T: From<u8>` is not satisfied
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/doublets-0.1.0-pre+beta.15/src/mem/split/generic/internal_sources_linked_list.rs:25:20
+   |
+25 |         constants: LinksConstants<T>,
+   |                    ^^^^^^^^^^^^^^^^^ the trait `From<u8>` is not implemented for `T`
+   |
+   = note: required because of the requirements on the impl of `Into<T>` for `u8`
+   = note: required because of the requirements on the impl of `TryFrom<u8>` for `T`
+   = note: required because of the requirements on the impl of `platform_data::link_type::FuntyPart` for `T`
+   = note: required because of the requirements on the impl of `platform_data::LinkType` for `T`
+note: required by a bound in `LinksConstants`
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/platform-data-0.1.0-beta.3/src/constants.rs:8:30
+   |
+8  | pub struct LinksConstants<T: LinkType> {
+   |                              ^^^^^^^^ required by this bound in `LinksConstants`
+help: consider further restricting this bound
+   |
+23 | impl<T: LinkType + std::convert::From<u8>> InternalSourcesLinkedList<T> {
+   |                  ++++++++++++++++++++++++
+
+error[E0277]: the trait bound `T: funty::Unsigned` is not satisfied
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/doublets-0.1.0-pre+beta.15/src/mem/split/generic/internal_sources_recursion_less_tree.rs:28:20
+   |
+28 |         constants: LinksConstants<T>,
+   |                    ^^^^^^^^^^^^^^^^^ the trait `funty::Unsigned` is not implemented for `T`
+   |
+   = note: required because of the requirements on the impl of `platform_data::LinkType` for `T`
+note: required by a bound in `LinksConstants`
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/platform-data-0.1.0-beta.3/src/constants.rs:8:30
+   |
+8  | pub struct LinksConstants<T: LinkType> {
+   |                              ^^^^^^^^ required by this bound in `LinksConstants`
+help: consider further restricting this bound
+   |
+26 | impl<T: LinkType + funty::Unsigned> InternalSourcesRecursionlessTree<T> {
+   |                  +++++++++++++++++
+
+error[E0277]: the trait bound `T: From<u8>` is not satisfied
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/doublets-0.1.0-pre+beta.15/src/mem/split/generic/internal_sources_recursion_less_tree.rs:28:20
+   |
+28 |         constants: LinksConstants<T>,
+   |                    ^^^^^^^^^^^^^^^^^ the trait `From<u8>` is not implemented for `T`
+   |
+   = note: required because of the requirements on the impl of `Into<T>` for `u8`
+   = note: required because of the requirements on the impl of `TryFrom<u8>` for `T`
+   = note: required because of the requirements on the impl of `platform_data::link_type::FuntyPart` for `T`
+   = note: required because of the requirements on the impl of `platform_data::LinkType` for `T`
+note: required by a bound in `LinksConstants`
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/platform-data-0.1.0-beta.3/src/constants.rs:8:30
+   |
+8  | pub struct LinksConstants<T: LinkType> {
+   |                              ^^^^^^^^ required by this bound in `LinksConstants`
+help: consider further restricting this bound
+   |
+26 | impl<T: LinkType + std::convert::From<u8>> InternalSourcesRecursionlessTree<T> {
+   |                  ++++++++++++++++++++++++
+
+error[E0277]: the trait bound `T: funty::Unsigned` is not satisfied
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/doublets-0.1.0-pre+beta.15/src/mem/split/generic/internal_targets_recursion_less_tree.rs:28:20
+   |
+28 |         constants: LinksConstants<T>,
+   |                    ^^^^^^^^^^^^^^^^^ the trait `funty::Unsigned` is not implemented for `T`
+   |
+   = note: required because of the requirements on the impl of `platform_data::LinkType` for `T`
+note: required by a bound in `LinksConstants`
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/platform-data-0.1.0-beta.3/src/constants.rs:8:30
+   |
+8  | pub struct LinksConstants<T: LinkType> {
+   |                              ^^^^^^^^ required by this bound in `LinksConstants`
+help: consider further restricting this bound
+   |
+26 | impl<T: LinkType + funty::Unsigned> InternalTargetsRecursionlessTree<T> {
+   |                  +++++++++++++++++
+
+error[E0277]: the trait bound `T: From<u8>` is not satisfied
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/doublets-0.1.0-pre+beta.15/src/mem/split/generic/internal_targets_recursion_less_tree.rs:28:20
+   |
+28 |         constants: LinksConstants<T>,
+   |                    ^^^^^^^^^^^^^^^^^ the trait `From<u8>` is not implemented for `T`
+   |
+   = note: required because of the requirements on the impl of `Into<T>` for `u8`
+   = note: required because of the requirements on the impl of `TryFrom<u8>` for `T`
+   = note: required because of the requirements on the impl of `platform_data::link_type::FuntyPart` for `T`
+   = note: required because of the requirements on the impl of `platform_data::LinkType` for `T`
+note: required by a bound in `LinksConstants`
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/platform-data-0.1.0-beta.3/src/constants.rs:8:30
+   |
+8  | pub struct LinksConstants<T: LinkType> {
+   |                              ^^^^^^^^ required by this bound in `LinksConstants`
+help: consider further restricting this bound
+   |
+26 | impl<T: LinkType + std::convert::From<u8>> InternalTargetsRecursionlessTree<T> {
+   |                  ++++++++++++++++++++++++
+
+error[E0277]: the trait bound `T: funty::Unsigned` is not satisfied
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/doublets-0.1.0-pre+beta.15/src/mem/split/store.rs:40:16
+   |
+40 |     constants: LinksConstants<T>,
+   |                ^^^^^^^^^^^^^^^^^ the trait `funty::Unsigned` is not implemented for `T`
+   |
+   = note: required because of the requirements on the impl of `platform_data::LinkType` for `T`
+note: required by a bound in `LinksConstants`
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/platform-data-0.1.0-beta.3/src/constants.rs:8:30
+   |
+8  | pub struct LinksConstants<T: LinkType> {
+   |                              ^^^^^^^^ required by this bound in `LinksConstants`
+help: consider further restricting this bound
+   |
+22 |     T: LinkType + funty::Unsigned,
+   |                 +++++++++++++++++
+
+error[E0277]: the trait bound `T: From<u8>` is not satisfied
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/doublets-0.1.0-pre+beta.15/src/mem/split/store.rs:40:16
+   |
+40 |     constants: LinksConstants<T>,
+   |                ^^^^^^^^^^^^^^^^^ the trait `From<u8>` is not implemented for `T`
+   |
+   = note: required because of the requirements on the impl of `Into<T>` for `u8`
+   = note: required because of the requirements on the impl of `TryFrom<u8>` for `T`
+   = note: required because of the requirements on the impl of `platform_data::link_type::FuntyPart` for `T`
+   = note: required because of the requirements on the impl of `platform_data::LinkType` for `T`
+note: required by a bound in `LinksConstants`
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/platform-data-0.1.0-beta.3/src/constants.rs:8:30
+   |
+8  | pub struct LinksConstants<T: LinkType> {
+   |                              ^^^^^^^^ required by this bound in `LinksConstants`
+help: consider further restricting this bound
+   |
+22 |     T: LinkType + std::convert::From<u8>,
+   |                 ++++++++++++++++++++++++
+
+error[E0277]: the trait bound `T: funty::Unsigned` is not satisfied
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/doublets-0.1.0-pre+beta.15/src/mem/split/store.rs:69:20
+   |
+69 |         constants: LinksConstants<T>,
+   |                    ^^^^^^^^^^^^^^^^^ the trait `funty::Unsigned` is not implemented for `T`
+   |
+   = note: required because of the requirements on the impl of `platform_data::LinkType` for `T`
+note: required by a bound in `LinksConstants`
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/platform-data-0.1.0-beta.3/src/constants.rs:8:30
+   |
+8  | pub struct LinksConstants<T: LinkType> {
+   |                              ^^^^^^^^ required by this bound in `LinksConstants`
+help: consider further restricting this bound
+   |
+52 |     T: LinkType + funty::Unsigned,
+   |                 +++++++++++++++++
+
+error[E0277]: the trait bound `T: From<u8>` is not satisfied
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/doublets-0.1.0-pre+beta.15/src/mem/split/store.rs:69:20
+   |
+69 |         constants: LinksConstants<T>,
+   |                    ^^^^^^^^^^^^^^^^^ the trait `From<u8>` is not implemented for `T`
+   |
+   = note: required because of the requirements on the impl of `Into<T>` for `u8`
+   = note: required because of the requirements on the impl of `TryFrom<u8>` for `T`
+   = note: required because of the requirements on the impl of `platform_data::link_type::FuntyPart` for `T`
+   = note: required because of the requirements on the impl of `platform_data::LinkType` for `T`
+note: required by a bound in `LinksConstants`
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/platform-data-0.1.0-beta.3/src/constants.rs:8:30
+   |
+8  | pub struct LinksConstants<T: LinkType> {
+   |                              ^^^^^^^^ required by this bound in `LinksConstants`
+help: consider further restricting this bound
+   |
+52 |     T: LinkType + std::convert::From<u8>,
+   |                 ++++++++++++++++++++++++
+
+error[E0277]: the trait bound `T: funty::Unsigned` is not satisfied
+   --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/doublets-0.1.0-pre+beta.15/src/mem/split/store.rs:550:28
+    |
+550 |     fn constants(&self) -> &LinksConstants<T> {
+    |                            ^^^^^^^^^^^^^^^^^^ the trait `funty::Unsigned` is not implemented for `T`
+    |
+    = note: required because of the requirements on the impl of `platform_data::LinkType` for `T`
+note: required by a bound in `LinksConstants`
+   --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/platform-data-0.1.0-beta.3/src/constants.rs:8:30
+    |
+8   | pub struct LinksConstants<T: LinkType> {
+    |                              ^^^^^^^^ required by this bound in `LinksConstants`
+help: consider further restricting this bound
+    |
+540 |     T: LinkType + funty::Unsigned,
+    |                 +++++++++++++++++
+
+error[E0277]: the trait bound `T: From<u8>` is not satisfied
+   --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/doublets-0.1.0-pre+beta.15/src/mem/split/store.rs:550:28
+    |
+550 |     fn constants(&self) -> &LinksConstants<T> {
+    |                            ^^^^^^^^^^^^^^^^^^ the trait `From<u8>` is not implemented for `T`
+    |
+    = note: required because of the requirements on the impl of `Into<T>` for `u8`
+    = note: required because of the requirements on the impl of `TryFrom<u8>` for `T`
+    = note: required because of the requirements on the impl of `platform_data::link_type::FuntyPart` for `T`
+    = note: required because of the requirements on the impl of `platform_data::LinkType` for `T`
+note: required by a bound in `LinksConstants`
+   --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/platform-data-0.1.0-beta.3/src/constants.rs:8:30
+    |
+8   | pub struct LinksConstants<T: LinkType> {
+    |                              ^^^^^^^^ required by this bound in `LinksConstants`
+help: consider further restricting this bound
+    |
+540 |     T: LinkType + std::convert::From<u8>,
+    |                 ++++++++++++++++++++++++
+
+error[E0277]: the trait bound `T: funty::Unsigned` is not satisfied
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/doublets-0.1.0-pre+beta.15/src/mem/unit/generic/links_recursionless_size_balanced_tree_base.rs:21:27
+   |
+21 |     pub fn new(constants: LinksConstants<T>, mem: NonNull<[LinkPart<T>]>) -> Self {
+   |                           ^^^^^^^^^^^^^^^^^ the trait `funty::Unsigned` is not implemented for `T`
+   |
+   = note: required because of the requirements on the impl of `platform_data::LinkType` for `T`
+note: required by a bound in `LinksConstants`
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/platform-data-0.1.0-beta.3/src/constants.rs:8:30
+   |
+8  | pub struct LinksConstants<T: LinkType> {
+   |                              ^^^^^^^^ required by this bound in `LinksConstants`
+help: consider further restricting this bound
+   |
+20 | impl<T: LinkType + funty::Unsigned> LinksRecursionlessSizeBalancedTreeBase<T> {
+   |                  +++++++++++++++++
+
+error[E0277]: the trait bound `T: From<u8>` is not satisfied
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/doublets-0.1.0-pre+beta.15/src/mem/unit/generic/links_recursionless_size_balanced_tree_base.rs:21:27
+   |
+21 |     pub fn new(constants: LinksConstants<T>, mem: NonNull<[LinkPart<T>]>) -> Self {
+   |                           ^^^^^^^^^^^^^^^^^ the trait `From<u8>` is not implemented for `T`
+   |
+   = note: required because of the requirements on the impl of `Into<T>` for `u8`
+   = note: required because of the requirements on the impl of `TryFrom<u8>` for `T`
+   = note: required because of the requirements on the impl of `platform_data::link_type::FuntyPart` for `T`
+   = note: required because of the requirements on the impl of `platform_data::LinkType` for `T`
+note: required by a bound in `LinksConstants`
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/platform-data-0.1.0-beta.3/src/constants.rs:8:30
+   |
+8  | pub struct LinksConstants<T: LinkType> {
+   |                              ^^^^^^^^ required by this bound in `LinksConstants`
+help: consider further restricting this bound
+   |
+20 | impl<T: LinkType + std::convert::From<u8>> LinksRecursionlessSizeBalancedTreeBase<T> {
+   |                  ++++++++++++++++++++++++
+
+error[E0277]: the trait bound `T: funty::Unsigned` is not satisfied
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/doublets-0.1.0-pre+beta.15/src/mem/unit/generic/sources_recursionless_size_balanced_tree.rs:27:27
+   |
+27 |     pub fn new(constants: LinksConstants<T>, mem: NonNull<[LinkPart<T>]>) -> Self {
+   |                           ^^^^^^^^^^^^^^^^^ the trait `funty::Unsigned` is not implemented for `T`
+   |
+   = note: required because of the requirements on the impl of `platform_data::LinkType` for `T`
+note: required by a bound in `LinksConstants`
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/platform-data-0.1.0-beta.3/src/constants.rs:8:30
+   |
+8  | pub struct LinksConstants<T: LinkType> {
+   |                              ^^^^^^^^ required by this bound in `LinksConstants`
+help: consider further restricting this bound
+   |
+26 | impl<T: LinkType + funty::Unsigned> LinksSourcesRecursionlessSizeBalancedTree<T> {
+   |                  +++++++++++++++++
+
+error[E0277]: the trait bound `T: From<u8>` is not satisfied
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/doublets-0.1.0-pre+beta.15/src/mem/unit/generic/sources_recursionless_size_balanced_tree.rs:27:27
+   |
+27 |     pub fn new(constants: LinksConstants<T>, mem: NonNull<[LinkPart<T>]>) -> Self {
+   |                           ^^^^^^^^^^^^^^^^^ the trait `From<u8>` is not implemented for `T`
+   |
+   = note: required because of the requirements on the impl of `Into<T>` for `u8`
+   = note: required because of the requirements on the impl of `TryFrom<u8>` for `T`
+   = note: required because of the requirements on the impl of `platform_data::link_type::FuntyPart` for `T`
+   = note: required because of the requirements on the impl of `platform_data::LinkType` for `T`
+note: required by a bound in `LinksConstants`
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/platform-data-0.1.0-beta.3/src/constants.rs:8:30
+   |
+8  | pub struct LinksConstants<T: LinkType> {
+   |                              ^^^^^^^^ required by this bound in `LinksConstants`
+help: consider further restricting this bound
+   |
+26 | impl<T: LinkType + std::convert::From<u8>> LinksSourcesRecursionlessSizeBalancedTree<T> {
+   |                  ++++++++++++++++++++++++
+
+error[E0277]: the trait bound `T: funty::Unsigned` is not satisfied
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/doublets-0.1.0-pre+beta.15/src/mem/unit/generic/targets_recursionless_size_balanced_tree.rs:27:27
+   |
+27 |     pub fn new(constants: LinksConstants<T>, mem: NonNull<[LinkPart<T>]>) -> Self {
+   |                           ^^^^^^^^^^^^^^^^^ the trait `funty::Unsigned` is not implemented for `T`
+   |
+   = note: required because of the requirements on the impl of `platform_data::LinkType` for `T`
+note: required by a bound in `LinksConstants`
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/platform-data-0.1.0-beta.3/src/constants.rs:8:30
+   |
+8  | pub struct LinksConstants<T: LinkType> {
+   |                              ^^^^^^^^ required by this bound in `LinksConstants`
+help: consider further restricting this bound
+   |
+26 | impl<T: LinkType + funty::Unsigned> LinksTargetsRecursionlessSizeBalancedTree<T> {
+   |                  +++++++++++++++++
+
+error[E0277]: the trait bound `T: From<u8>` is not satisfied
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/doublets-0.1.0-pre+beta.15/src/mem/unit/generic/targets_recursionless_size_balanced_tree.rs:27:27
+   |
+27 |     pub fn new(constants: LinksConstants<T>, mem: NonNull<[LinkPart<T>]>) -> Self {
+   |                           ^^^^^^^^^^^^^^^^^ the trait `From<u8>` is not implemented for `T`
+   |
+   = note: required because of the requirements on the impl of `Into<T>` for `u8`
+   = note: required because of the requirements on the impl of `TryFrom<u8>` for `T`
+   = note: required because of the requirements on the impl of `platform_data::link_type::FuntyPart` for `T`
+   = note: required because of the requirements on the impl of `platform_data::LinkType` for `T`
+note: required by a bound in `LinksConstants`
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/platform-data-0.1.0-beta.3/src/constants.rs:8:30
+   |
+8  | pub struct LinksConstants<T: LinkType> {
+   |                              ^^^^^^^^ required by this bound in `LinksConstants`
+help: consider further restricting this bound
+   |
+26 | impl<T: LinkType + std::convert::From<u8>> LinksTargetsRecursionlessSizeBalancedTree<T> {
+   |                  ++++++++++++++++++++++++
+
+error[E0277]: the trait bound `T: funty::Unsigned` is not satisfied
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/doublets-0.1.0-pre+beta.15/src/mem/unit/store.rs:30:16
+   |
+30 |     constants: LinksConstants<T>,
+   |                ^^^^^^^^^^^^^^^^^ the trait `funty::Unsigned` is not implemented for `T`
+   |
+   = note: required because of the requirements on the impl of `platform_data::LinkType` for `T`
+note: required by a bound in `LinksConstants`
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/platform-data-0.1.0-beta.3/src/constants.rs:8:30
+   |
+8  | pub struct LinksConstants<T: LinkType> {
+   |                              ^^^^^^^^ required by this bound in `LinksConstants`
+help: consider further restricting this bound
+   |
+21 |     T: LinkType + funty::Unsigned,
+   |                 +++++++++++++++++
+
+error[E0277]: the trait bound `T: From<u8>` is not satisfied
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/doublets-0.1.0-pre+beta.15/src/mem/unit/store.rs:30:16
+   |
+30 |     constants: LinksConstants<T>,
+   |                ^^^^^^^^^^^^^^^^^ the trait `From<u8>` is not implemented for `T`
+   |
+   = note: required because of the requirements on the impl of `Into<T>` for `u8`
+   = note: required because of the requirements on the impl of `TryFrom<u8>` for `T`
+   = note: required because of the requirements on the impl of `platform_data::link_type::FuntyPart` for `T`
+   = note: required because of the requirements on the impl of `platform_data::LinkType` for `T`
+note: required by a bound in `LinksConstants`
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/platform-data-0.1.0-beta.3/src/constants.rs:8:30
+   |
+8  | pub struct LinksConstants<T: LinkType> {
+   |                              ^^^^^^^^ required by this bound in `LinksConstants`
+help: consider further restricting this bound
+   |
+21 |     T: LinkType + std::convert::From<u8>,
+   |                 ++++++++++++++++++++++++
+
+error[E0277]: the trait bound `T: funty::Unsigned` is not satisfied
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/doublets-0.1.0-pre+beta.15/src/mem/unit/store.rs:48:20
+   |
+48 |         constants: LinksConstants<T>,
+   |                    ^^^^^^^^^^^^^^^^^ the trait `funty::Unsigned` is not implemented for `T`
+   |
+   = note: required because of the requirements on the impl of `platform_data::LinkType` for `T`
+note: required by a bound in `LinksConstants`
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/platform-data-0.1.0-beta.3/src/constants.rs:8:30
+   |
+8  | pub struct LinksConstants<T: LinkType> {
+   |                              ^^^^^^^^ required by this bound in `LinksConstants`
+help: consider further restricting this bound
+   |
+37 | impl<T: LinkType + funty::Unsigned, M: RawMem<LinkPart<T>>, TS: UnitTree<T>, TT: UnitTree<T>, TU: UnitList<T>>
+   |                  +++++++++++++++++
+
+error[E0277]: the trait bound `T: From<u8>` is not satisfied
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/doublets-0.1.0-pre+beta.15/src/mem/unit/store.rs:48:20
+   |
+48 |         constants: LinksConstants<T>,
+   |                    ^^^^^^^^^^^^^^^^^ the trait `From<u8>` is not implemented for `T`
+   |
+   = note: required because of the requirements on the impl of `Into<T>` for `u8`
+   = note: required because of the requirements on the impl of `TryFrom<u8>` for `T`
+   = note: required because of the requirements on the impl of `platform_data::link_type::FuntyPart` for `T`
+   = note: required because of the requirements on the impl of `platform_data::LinkType` for `T`
+note: required by a bound in `LinksConstants`
+  --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/platform-data-0.1.0-beta.3/src/constants.rs:8:30
+   |
+8  | pub struct LinksConstants<T: LinkType> {
+   |                              ^^^^^^^^ required by this bound in `LinksConstants`
+help: consider further restricting this bound
+   |
+37 | impl<T: LinkType + std::convert::From<u8>, M: RawMem<LinkPart<T>>, TS: UnitTree<T>, TT: UnitTree<T>, TU: UnitList<T>>
+   |                  ++++++++++++++++++++++++
+
+error[E0277]: the trait bound `T: funty::Unsigned` is not satisfied
+   --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/doublets-0.1.0-pre+beta.15/src/mem/unit/store.rs:328:28
+    |
+328 |     fn constants(&self) -> &LinksConstants<T> {
+    |                            ^^^^^^^^^^^^^^^^^^ the trait `funty::Unsigned` is not implemented for `T`
+    |
+    = note: required because of the requirements on the impl of `platform_data::LinkType` for `T`
+note: required by a bound in `LinksConstants`
+   --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/platform-data-0.1.0-beta.3/src/constants.rs:8:30
+    |
+8   | pub struct LinksConstants<T: LinkType> {
+    |                              ^^^^^^^^ required by this bound in `LinksConstants`
+help: consider further restricting this bound
+    |
+325 | impl<T: LinkType + funty::Unsigned, M: RawMem<LinkPart<T>>, TS: UnitTree<T>, TT: UnitTree<T>, TU: UnitList<T>>
+    |                  +++++++++++++++++
+
+error[E0277]: the trait bound `T: From<u8>` is not satisfied
+   --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/doublets-0.1.0-pre+beta.15/src/mem/unit/store.rs:328:28
+    |
+328 |     fn constants(&self) -> &LinksConstants<T> {
+    |                            ^^^^^^^^^^^^^^^^^^ the trait `From<u8>` is not implemented for `T`
+    |
+    = note: required because of the requirements on the impl of `Into<T>` for `u8`
+    = note: required because of the requirements on the impl of `TryFrom<u8>` for `T`
+    = note: required because of the requirements on the impl of `platform_data::link_type::FuntyPart` for `T`
+    = note: required because of the requirements on the impl of `platform_data::LinkType` for `T`
+note: required by a bound in `LinksConstants`
+   --> /home/konard/.cargo/registry/src/github.com-1ecc6299db9ec823/platform-data-0.1.0-beta.3/src/constants.rs:8:30
+    |
+8   | pub struct LinksConstants<T: LinkType> {
+    |                              ^^^^^^^^ required by this bound in `LinksConstants`
+help: consider further restricting this bound
+    |
+325 | impl<T: LinkType + std::convert::From<u8>, M: RawMem<LinkPart<T>>, TS: UnitTree<T>, TT: UnitTree<T>, TU: UnitList<T>>
+    |                  ++++++++++++++++++++++++
+
+For more information about this error, try `rustc --explain E0277`.
+error: could not compile `doublets` due to 36 previous errors
