@@ -8,7 +8,7 @@ const CATALAN_NUMBERS: [u64; 25] = [
     6564120420, 24466267020, 91482563640, 343059613650, 1289904147324,
 ];
 
-const fn catalan_number(n: usize) -> u64 {
+const fn catalan(n: usize) -> u64 {
     CATALAN_NUMBERS[n]
 }
 
@@ -19,7 +19,7 @@ where
 {
     assert!(seq.len() > 2);
 
-    let mut variants = Vec::with_capacity(catalan_number(seq.len() - 1) as usize);
+    let mut variants = Vec::with_capacity(catalan(seq.len() - 1) as usize);
     for splitter in 1..seq.len() {
         let (left, right) = seq.split_at(splitter);
         let (left, right) = (
