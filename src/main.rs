@@ -67,6 +67,20 @@ fn nand(a: bool, b: bool) -> bool {
     !(a && b)
 }
 
+fn get_link_by_id(store: &mut unit::Store<usize, _>, id: usize) -> Result<Link<usize>, Error<usize>> {
+    // `any` constant denotes any link
+    let any = store.constants().any;
+    let mut link_result = Err(Error::new("Link not found"));
+
+    store.each_iter([id, any, any]).for_each(|link| {
+        if link.id() == id {
+            link_result = Ok(link);
+        }
+    });
+
+    link_result
+}
+
 fn main() -> Result<(), Error<usize>> {
     let mem = mem::Global::new();
     let mut store = unit::Store::<usize, _>::new(mem)?;
