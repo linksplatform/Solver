@@ -1,4 +1,4 @@
-use doublets::{data::LinkType, mem, unit, Doublets, Error, LinkType};
+use doublets::{data::LinkType, mem, unit, Doublets, Error};
 use doublets::{DoubletsExt, Links};
 use tap::Pipe;
 
