@@ -53,6 +53,20 @@ where
     .pipe(Ok)
 }
 
+/// Performs a NAND operation on two boolean inputs.
+///
+/// # Arguments
+///
+/// * `a` - A boolean input.
+/// * `b` - A boolean input.
+///
+/// # Returns
+///
+/// * A boolean output representing the NAND operation on the inputs.
+fn nand(a: bool, b: bool) -> bool {
+    !(a && b)
+}
+
 fn main() -> Result<(), Error<usize>> {
     let mem = mem::Global::new();
     let mut store = unit::Store::<usize, _>::new(mem)?;
@@ -74,4 +88,17 @@ fn main() -> Result<(), Error<usize>> {
     });
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_nand() {
+        assert_eq!(nand(true, true), false);
+        assert_eq!(nand(true, false), true);
+        assert_eq!(nand(false, true), true);
+        assert_eq!(nand(false, false), true);
+    }
 }
