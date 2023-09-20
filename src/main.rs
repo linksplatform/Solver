@@ -1,4 +1,5 @@
 use doublets::{data::LinkType, mem, unit, Doublets, Error};
+use doublets::{DoubletsExt, Links};
 use tap::Pipe;
 
 #[rustfmt::skip]
@@ -57,11 +58,20 @@ fn main() -> Result<(), Error<usize>> {
     let mut store = unit::Store::<usize, _>::new(mem)?;
 
     // Create a vector of N points using iterators
-    let seq: Vec<_> = (0..15)
+    let seq: Vec<_> = (0..3)
         .map(|_| store.create_point())
         .collect::<Result<_, _>>()?;
 
-    all_seq_variants(&mut store, &seq)?;
+    let result = all_seq_variants(&mut store, &seq)?;
+    println!("{}", result.len());
+    println!("{}", result[0]);
+
+    // `any` constant denotes any link
+    let any = store.constants().any;
+
+    store.each_iter([any, any, any]).for_each(|link| {
+        println!("{link:?}");
+    });
 
     Ok(())
 }
