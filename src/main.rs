@@ -67,9 +67,7 @@ fn nand(a: bool, b: bool) -> bool {
     !(a && b)
 }
 
-fn get_link_by_id<T>(store: &mut unit::Store<usize, T>, id: usize) -> Result<Link<T>, Error<usize>> 
-where
-    T: LinkType,
+fn get_link_by_id<T: LinkType>(store: &mut impl Doublets<T>, id: usize) -> Result<Link<T>, Error<usize>> 
 {
     // `any` constant denotes any link
     let any = store.constants().any;
