@@ -1,4 +1,4 @@
-use doublets::{data::LinkType, mem, unit, Doublets, Error};
+use doublets::{data::LinkType, mem, unit, Doublets, Error, Link};
 use doublets::{DoubletsExt, Links};
 use tap::Pipe;
 
@@ -67,7 +67,7 @@ fn nand(a: bool, b: bool) -> bool {
     !(a && b)
 }
 
-fn get_link_by_id(store: &mut unit::Store<usize, _>, id: usize) -> Result<Link<usize>, Error<usize>> {
+fn get_link_by_id<T>(store: &mut unit::Store<usize, T>, id: usize) -> Result<Link<usize>, Error<usize>> {
     // `any` constant denotes any link
     let any = store.constants().any;
     let mut link_result = Err(Error::new("Link not found"));
