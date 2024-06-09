@@ -5,7 +5,12 @@
 # Learn more from ready-to-use templates: https://www.gitpod.io/docs/introduction/getting-started/quickstart
 
 tasks:
-  - init: rustup toolchain install nightly-2022-08-22 && cargo +nightly-2022-08-22 build
-    command: cargo +nightly watch -x run
+  - init: |
+      rustup toolchain install nightly-2022-08-22 && cargo +nightly-2022-08-22 build
+      cargo update -p bumpalo@3.16.0 --precise 3.11.1
+    command: |
+      rustup toolchain install nightly-2022-08-22 && cargo +nightly-2022-08-22 build
+      cargo update -p bumpalo@3.16.0 --precise 3.11.1
+      cargo +nightly watch -x run
 
 
