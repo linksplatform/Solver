@@ -1,9 +1,9 @@
 use doublets::{
   data::LinkType, mem, mem::RawMem, unit, unit::LinkPart, Doublets, DoubletsExt, Error, Link, Links,
 };
+use std::{collections::HashSet, fmt::Write};
 use tap::Pipe;
-use std::collections::HashSet;
-use std::fmt::Write;
+use itertools::Itertools;
 
 #[rustfmt::skip]
 const CATALAN_NUMBERS: [u64; 25] = [
@@ -208,22 +208,39 @@ fn main() -> Result<(), Error<usize>> {
   let mem = mem::Global::new();
   let mut store = unit::Store::<usize, _>::new(mem)?;
 
-  // Create a vector of N points using iterators
-  let seq: Vec<_> = (0..3)
-    .map(|_| store.create_point())
-    .collect::<Result<_, _>>()?;
+  let x = store.create_point()?;
+  let y = store.create_point()?;
 
-  let result = all_seq_variants(&mut store, &seq)?;
+  // Define the two links
+  let args = vec![x, y];
 
-  println!("Total variants: {}", result.len());
-  for variant in &result {
-    println!("{variant}");
+  // Specify the length of the sequences you want (e.g., 1 to 16)
+  let seq_length = 2; // Change this as needed
+
+  // Generate all possible sequences of `1` and `2` with the specified length
+  let sequences: Vec<Vec<usize>> = (1..=seq_length)
+    .flat_map(|length| args.iter().cloned().combinations_with_replacement(length))
+    .collect();
+
+  println!("Total sequences: {}", sequences.len());
+  for seq in &sequences {
+    println!("{:?}", seq);
   }
 
-  println!("Full structure:");
-  for variant in &result {
-    let deep_structure = deep_format(&mut store, *variant, |link| link.is_full(), true, true)?;
-    println!("{deep_structure}");
+  // Use the generated sequences to create variants
+  for seq in sequences {
+    let result = all_seq_variants(&mut store, &seq)?;
+
+    println!("Total variants: {}", result.len());
+    for variant in &result {
+      println!("{variant}");
+    }
+
+    println!("Full structure:");
+    for variant in &result {
+      let deep_structure = deep_format(&mut store, *variant, |link| link.is_full(), true, true)?;
+      println!("{deep_structure}");
+    }
   }
 
   // `any` constant denotes any link
