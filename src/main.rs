@@ -1,9 +1,9 @@
 use doublets::{
   data::LinkType, mem, mem::RawMem, unit, unit::LinkPart, Doublets, DoubletsExt, Error, Link, Links,
 };
+use itertools::Itertools;
 use std::{collections::HashSet, fmt::Write};
 use tap::Pipe;
-use itertools::Itertools;
 
 #[rustfmt::skip]
 const CATALAN_NUMBERS: [u64; 25] = [
@@ -175,9 +175,29 @@ where
   }
 
   // Recur for source and target
-  append_structure(store, sb, visited, link.source, is_element, append_index, render_visited, render_index, render_debug)?;
+  append_structure(
+    store,
+    sb,
+    visited,
+    link.source,
+    is_element,
+    append_index,
+    render_visited,
+    render_index,
+    render_debug,
+  )?;
   sb.push(' ');
-  append_structure(store, sb, visited, link.target, is_element, append_index, render_visited, render_index, render_debug)?;
+  append_structure(
+    store,
+    sb,
+    visited,
+    link.target,
+    is_element,
+    append_index,
+    render_visited,
+    render_index,
+    render_debug,
+  )?;
 
   // Close the structure with ')'
   sb.push(')');
@@ -191,8 +211,7 @@ fn append_index<T>(
   is_missing: bool,
   is_visited: bool,
   render_debug: bool,
-) 
-where
+) where
   T: LinkType,
 {
   if render_debug {
@@ -205,6 +224,68 @@ where
 
   // Always render the index at the end
   write!(sb, "{}", index).unwrap();
+}
+
+fn apply_nand_to_structure<T, S>(
+  store: &mut S,
+  link_index: T,
+  x_placeholder_link: T,
+  y_placeholder_link: T,
+  x_value: bool,
+  y_value: bool,
+) -> Result<bool, Error<T>>
+where
+  T: LinkType,
+  S: Doublets<T>,
+{
+  // Fetch the link (assume it's guaranteed to exist)
+  let link = store
+    .get_link(link_index)
+    .ok_or(Error::NotExists(link_index))?;
+
+  if link.index == x_placeholder_link {
+    return Ok(x_value);
+  } else if link.index == y_placeholder_link {
+    return Ok(y_value);
+  } else {
+  }
+
+  // If the link source is the x or y placeholder, substitute the values
+  let lhs = if link.source == x_placeholder_link {
+    x_value
+  } else if link.source == y_placeholder_link {
+    y_value
+  } else {
+    // Recursively apply NAND on the source link
+    apply_nand_to_structure(
+      store,
+      link.source,
+      x_placeholder_link,
+      y_placeholder_link,
+      x_value,
+      y_value,
+    )?
+  };
+
+  // If the link target is the x or y placeholder, substitute the values
+  let rhs = if link.target == x_placeholder_link {
+    x_value
+  } else if link.target == y_placeholder_link {
+    y_value
+  } else {
+    // Recursively apply NAND on the target link
+    apply_nand_to_structure(
+      store,
+      link.target,
+      x_placeholder_link,
+      y_placeholder_link,
+      x_value,
+      y_value,
+    )?
+  };
+
+  // Return the result of the NAND operation on the left-hand side and right-hand side
+  Ok(nand(lhs, rhs))
 }
 
 fn main() -> Result<(), Error<usize>> {
@@ -243,15 +324,51 @@ fn main() -> Result<(), Error<usize>> {
 
     println!("Total variants: {}", result.len());
     for variant in &result {
-      println!("{variant}");
-    }
-
-    println!("Full structure:");
-    for variant in &result {
-      let mut deep_structure = deep_format(&mut store, *variant, |link| link.is_partial(), true, false, false)?;
+      let mut deep_structure = deep_format(
+        &mut store,
+        *variant,
+        |link| link.is_partial(),
+        true,
+        false,
+        false,
+      )?;
       deep_structure = deep_structure.replace(&x.to_string(), "x");
       deep_structure = deep_structure.replace(&y.to_string(), "y");
-      println!("{deep_structure}");
+      println!("({variant}: {deep_structure})");
+
+      let base_expression: String = deep_structure.replace(" ", " ↑ ");
+
+      println!("expression: {base_expression}");
+
+      // Define all possible combinations of x_value and y_value
+      let combinations = [
+        (false, false),
+        (false, true),
+        (true, false),
+        (true, true),
+      ];
+
+      // Loop through each combination
+      for &(x_value, y_value) in &combinations {
+        // Compute the final NAND result by traversing the entire expression tree for the current combination
+        let nand_result = apply_nand_to_structure(
+            &mut store,
+            *variant,
+            x,       // x_placeholder_link
+            y,       // y_placeholder_link
+            x_value, // current x_value
+            y_value, // current y_value
+        )?;
+
+        // Replace placeholders in the expression with the current x_value and y_value
+        let mut expression = base_expression.replace("x", &x_value.to_string());
+        expression = expression.replace("y", &y_value.to_string());
+
+        // Print the final expression and the result of NAND evaluation
+        println!("{expression} = {nand_result}");
+      }
+
+      println!();
     }
   }
 
@@ -278,9 +395,10 @@ mod tests {
 
   #[test]
   fn test_nand() {
-    assert_eq!(nand(true, true), false);
-    assert_eq!(nand(true, false), true);
-    assert_eq!(nand(false, true), true);
+
     assert_eq!(nand(false, false), true);
+    assert_eq!(nand(false, true), true);
+    assert_eq!(nand(true, false), true);
+    assert_eq!(nand(true, true), false);
   }
 }
