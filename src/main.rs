@@ -137,10 +137,16 @@ where
     return Ok(());
   }
 
+  // Check if the link itself is an element before traversing
+  let link = store.get_link(link_index).unwrap();
+  if is_element(&link) {
+    append_element(sb, &link);  // Directly append the element's index
+    return Ok(());
+  }
+
   if store.exist(link_index) {
     if visited.insert(link_index) {
       sb.push('(');
-      let link = store.get_link(link_index).unwrap();
 
       if render_index {
         write!(sb, "{}: ", link.index).unwrap();
@@ -219,10 +225,10 @@ fn main() -> Result<(), Error<usize>> {
   let args = vec![x, y];
 
   // Specify the length of the sequences you want (e.g., 1 to 16)
-  let seq_length = 2; // Change this as needed
+  let max_seq_length = 4; // Change this as needed
 
   // Generate all possible sequences of `1` and `2` with the specified length
-  let sequences: Vec<Vec<usize>> = (1..=seq_length)
+  let sequences: Vec<Vec<usize>> = (1..=max_seq_length)
     .flat_map(|length| args.iter().cloned().combinations_with_replacement(length))
     .collect();
 
@@ -242,7 +248,7 @@ fn main() -> Result<(), Error<usize>> {
 
     println!("Full structure:");
     for variant in &result {
-      let deep_structure = deep_format(&mut store, *variant, |link| link.is_partial(), true, true)?;
+      let deep_structure = deep_format(&mut store, *variant, |link| link.is_partial(), false, false)?;
       println!("{deep_structure}");
     }
   }
