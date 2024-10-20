@@ -2,6 +2,8 @@ use doublets::{
   data::LinkType, mem, mem::RawMem, unit, unit::LinkPart, Doublets, DoubletsExt, Error, Link, Links,
 };
 use tap::Pipe;
+use std::collections::HashSet;
+use std::fmt::Write;
 
 #[rustfmt::skip]
 const CATALAN_NUMBERS: [u64; 25] = [
@@ -88,6 +90,120 @@ where
   link_result
 }
 
+pub fn deep_format<T, S>(
+  store: &mut S,
+  link_index: T,
+  is_element: impl Fn(&Link<T>) -> bool,
+  render_index: bool,
+  render_debug: bool,
+) -> Result<String, Error<T>>
+where
+  T: LinkType,
+  S: Doublets<T>,
+{
+  let mut sb = String::new();
+  let mut visited = HashSet::new();
+  append_structure(
+    store,
+    &mut sb,
+    &mut visited,
+    link_index,
+    &is_element,
+    &|sb, link| {
+      write!(sb, "{}", link.index).unwrap();
+    },
+    render_index,
+    render_debug,
+  )?;
+  Ok(sb)
+}
+
+fn append_structure<T, S>(
+  store: &mut S,
+  sb: &mut String,
+  visited: &mut HashSet<T>,
+  link_index: T,
+  is_element: &impl Fn(&Link<T>) -> bool,
+  append_element: &impl Fn(&mut String, &Link<T>),
+  render_index: bool,
+  render_debug: bool,
+) -> Result<(), Error<T>>
+where
+  T: LinkType,
+  S: Doublets<T>,
+{
+  let constants = store.constants();
+  if link_index == constants.null || link_index == constants.any || link_index == constants.itself {
+    return Ok(());
+  }
+
+  if store.exist(link_index) {
+    if visited.insert(link_index) {
+      sb.push('(');
+      let link = store.get_link(link_index).unwrap();
+
+      if render_index {
+        write!(sb, "{}: ", link.index).unwrap();
+      }
+
+      if link.source == link.index {
+        write!(sb, "{}", link.index).unwrap();
+      } else {
+        let source = store.get_link(link.source).unwrap();
+        if is_element(&source) {
+          append_element(sb, &source);
+        } else {
+          append_structure(
+            store,
+            sb,
+            visited,
+            source.index,
+            is_element,
+            append_element,
+            render_index,
+            render_debug,
+          )?;
+        }
+      }
+
+      sb.push(' ');
+
+      if link.target == link.index {
+        write!(sb, "{}", link.index).unwrap();
+      } else {
+        let target = store.get_link(link.target).unwrap();
+        if is_element(&target) {
+          append_element(sb, &target);
+        } else {
+          append_structure(
+            store,
+            sb,
+            visited,
+            target.index,
+            is_element,
+            append_element,
+            render_index,
+            render_debug,
+          )?;
+        }
+      }
+
+      sb.push(')');
+    } else {
+      if render_debug {
+        sb.push('*');
+      }
+      write!(sb, "{}", link_index).unwrap();
+    }
+  } else {
+    if render_debug {
+      sb.push('~');
+    }
+    write!(sb, "{}", link_index).unwrap();
+  }
+  Ok(())
+}
+
 fn main() -> Result<(), Error<usize>> {
   let mem = mem::Global::new();
   let mut store = unit::Store::<usize, _>::new(mem)?;
@@ -98,9 +214,16 @@ fn main() -> Result<(), Error<usize>> {
     .collect::<Result<_, _>>()?;
 
   let result = all_seq_variants(&mut store, &seq)?;
+
   println!("Total variants: {}", result.len());
   for variant in &result {
     println!("{variant}");
+  }
+
+  println!("Full structure:");
+  for variant in &result {
+    let deep_structure = deep_format(&mut store, *variant, |link| link.is_full(), true, true)?;
+    println!("{deep_structure}");
   }
 
   // `any` constant denotes any link
