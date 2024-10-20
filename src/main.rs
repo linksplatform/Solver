@@ -111,6 +111,12 @@ fn main() -> Result<(), Error<usize>> {
     println!("{link:?}");
   });
 
+  println!("Check for full points:");
+  // Iterate over all links and check if they are full points
+  store.each_iter([any, any, any]).for_each(|link| {
+    println!("{:?} is a full point: {}", link, link.is_full());
+  });
+
   Ok(())
 }
 
