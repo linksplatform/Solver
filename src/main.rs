@@ -94,6 +94,7 @@ pub fn deep_format<T, S>(
   store: &mut S,
   link_index: T,
   is_element: impl Fn(&Link<T>) -> bool,
+  render_visited: bool,
   render_index: bool,
   render_debug: bool,
 ) -> Result<String, Error<T>>
@@ -110,6 +111,7 @@ where
     link_index,
     &is_element,
     &append_index,
+    render_visited,
     render_index,
     render_debug,
   )?;
@@ -123,6 +125,7 @@ fn append_structure<T, S>(
   link_index: T,
   is_element: &impl Fn(&Link<T>) -> bool,
   append_index: &impl Fn(&mut String, T, bool, bool, bool),
+  render_visited: bool,
   render_index: bool,
   render_debug: bool,
 ) -> Result<(), Error<T>>
@@ -139,7 +142,7 @@ where
   let is_visited = !visited.insert(link_index);
 
   // Skip fetching the link if it's missing or visited
-  if is_missing || is_visited {
+  if is_missing || (is_visited && !render_visited) {
     append_index(sb, link_index, is_missing, is_visited, render_debug);
     return Ok(());
   }
@@ -172,9 +175,9 @@ where
   }
 
   // Recur for source and target
-  append_structure(store, sb, visited, link.source, is_element, append_index, render_index, render_debug)?;
+  append_structure(store, sb, visited, link.source, is_element, append_index, render_visited, render_index, render_debug)?;
   sb.push(' ');
-  append_structure(store, sb, visited, link.target, is_element, append_index, render_index, render_debug)?;
+  append_structure(store, sb, visited, link.target, is_element, append_index, render_visited, render_index, render_debug)?;
 
   // Close the structure with ')'
   sb.push(')');
@@ -228,7 +231,10 @@ fn main() -> Result<(), Error<usize>> {
 
   println!("Total sequences: {}", sequences.len());
   for seq in &sequences {
-    println!("{:?}", seq);
+    let mut seq_string = format!("{:?}", seq);
+    seq_string = seq_string.replace(&x.to_string(), "x");
+    seq_string = seq_string.replace(&y.to_string(), "y");
+    println!("{}", seq_string);
   }
 
   // Use the generated sequences to create variants
@@ -242,7 +248,9 @@ fn main() -> Result<(), Error<usize>> {
 
     println!("Full structure:");
     for variant in &result {
-      let deep_structure = deep_format(&mut store, *variant, |link| link.is_partial(), false, false)?;
+      let mut deep_structure = deep_format(&mut store, *variant, |link| link.is_partial(), true, false, false)?;
+      deep_structure = deep_structure.replace(&x.to_string(), "x");
+      deep_structure = deep_structure.replace(&y.to_string(), "y");
       println!("{deep_structure}");
     }
   }
@@ -255,11 +263,11 @@ fn main() -> Result<(), Error<usize>> {
     println!("{link:?}");
   });
 
-  println!("Check for full points:");
-  // Iterate over all links and check if they are full points
-  store.each_iter([any, any, any]).for_each(|link| {
-    println!("{:?} is a full point: {}", link, link.is_full());
-  });
+  // println!("Check for full points:");
+  // // Iterate over all links and check if they are full points
+  // store.each_iter([any, any, any]).for_each(|link| {
+  //   println!("{:?} is a full point: {}", link, link.is_full());
+  // });
 
   Ok(())
 }
