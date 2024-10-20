@@ -109,9 +109,7 @@ where
     &mut visited,
     link_index,
     &is_element,
-    &|sb, link| {
-      write!(sb, "{}", link.index).unwrap();
-    },
+    &append_index,
     render_index,
     render_debug,
   )?;
@@ -124,7 +122,7 @@ fn append_structure<T, S>(
   visited: &mut HashSet<T>,
   link_index: T,
   is_element: &impl Fn(&Link<T>) -> bool,
-  append_element: &impl Fn(&mut String, &Link<T>),
+  append_index: &impl Fn(&mut String, T, bool, bool, bool),
   render_index: bool,
   render_debug: bool,
 ) -> Result<(), Error<T>>
@@ -133,81 +131,77 @@ where
   S: Doublets<T>,
 {
   let constants = store.constants();
-  if link_index == constants.null || link_index == constants.any || link_index == constants.itself {
+  if [constants.null, constants.any, constants.itself].contains(&link_index) {
     return Ok(());
   }
 
-  // Check if the link itself is an element before traversing
-  let link = store.get_link(link_index).unwrap();
+  let mut is_missing = !store.exist(link_index);
+  let is_visited = !visited.insert(link_index);
+
+  // Skip fetching the link if it's missing or visited
+  if is_missing || is_visited {
+    append_index(sb, link_index, is_missing, is_visited, render_debug);
+    return Ok(());
+  }
+
+  // Call get_link to check if the link exists
+  let link = store.get_link(link_index);
+  is_missing = link.is_none();
+
+  if is_missing {
+    append_index(sb, link_index, is_missing, is_visited, render_debug);
+    return Ok(());
+  }
+
+  let link = link.unwrap();
+
+  // Check if the link is an element after unwrapping
   if is_element(&link) {
-    append_element(sb, &link);  // Directly append the element's index
+    append_index(sb, link_index, false, false, render_debug);
     return Ok(());
   }
 
-  if store.exist(link_index) {
-    if visited.insert(link_index) {
-      sb.push('(');
+  // Open the structure with '('
+  sb.push('(');
 
-      if render_index {
-        write!(sb, "{}: ", link.index).unwrap();
-      }
-
-      if link.source == link.index {
-        write!(sb, "{}", link.index).unwrap();
-      } else {
-        let source = store.get_link(link.source).unwrap();
-        if is_element(&source) {
-          append_element(sb, &source);
-        } else {
-          append_structure(
-            store,
-            sb,
-            visited,
-            source.index,
-            is_element,
-            append_element,
-            render_index,
-            render_debug,
-          )?;
-        }
-      }
-
-      sb.push(' ');
-
-      if link.target == link.index {
-        write!(sb, "{}", link.index).unwrap();
-      } else {
-        let target = store.get_link(link.target).unwrap();
-        if is_element(&target) {
-          append_element(sb, &target);
-        } else {
-          append_structure(
-            store,
-            sb,
-            visited,
-            target.index,
-            is_element,
-            append_element,
-            render_index,
-            render_debug,
-          )?;
-        }
-      }
-
-      sb.push(')');
-    } else {
-      if render_debug {
-        sb.push('*');
-      }
-      write!(sb, "{}", link_index).unwrap();
-    }
-  } else {
-    if render_debug {
-      sb.push('~');
-    }
-    write!(sb, "{}", link_index).unwrap();
+  // Render index if required
+  if render_index {
+    append_index(sb, link_index, false, false, render_debug);
+    sb.push(':');
+    sb.push(' ');
   }
+
+  // Recur for source and target
+  append_structure(store, sb, visited, link.source, is_element, append_index, render_index, render_debug)?;
+  sb.push(' ');
+  append_structure(store, sb, visited, link.target, is_element, append_index, render_index, render_debug)?;
+
+  // Close the structure with ')'
+  sb.push(')');
+
   Ok(())
+}
+
+fn append_index<T>(
+  sb: &mut String,
+  index: T,
+  is_missing: bool,
+  is_visited: bool,
+  render_debug: bool,
+) 
+where
+  T: LinkType,
+{
+  if render_debug {
+    if is_missing {
+      sb.push('~');
+    } else if is_visited {
+      sb.push('*');
+    }
+  }
+
+  // Always render the index at the end
+  write!(sb, "{}", index).unwrap();
 }
 
 fn main() -> Result<(), Error<usize>> {
