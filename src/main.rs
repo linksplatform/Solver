@@ -157,7 +157,7 @@ where
 
   // Check if the link is an element after unwrapping
   if is_element(&link) {
-    append_index(sb, link_index, false, false, render_debug);
+    append_index(sb, link_index, is_missing, is_visited, render_debug);
     return Ok(());
   }
 
@@ -166,7 +166,7 @@ where
 
   // Render index if required
   if render_index {
-    append_index(sb, link_index, false, false, render_debug);
+    append_index(sb, link_index, is_missing, is_visited, render_debug);
     sb.push(':');
     sb.push(' ');
   }
