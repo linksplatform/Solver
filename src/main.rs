@@ -208,8 +208,12 @@ fn main() -> Result<(), Error<usize>> {
   let mem = mem::Global::new();
   let mut store = unit::Store::<usize, _>::new(mem)?;
 
+  let link_type = store.create_point()?;
+
   let x = store.create_point()?;
+  store.update(x, x, link_type);
   let y = store.create_point()?;
+  store.update(y, y, link_type);
 
   // Define the two links
   let args = vec![x, y];
@@ -238,7 +242,7 @@ fn main() -> Result<(), Error<usize>> {
 
     println!("Full structure:");
     for variant in &result {
-      let deep_structure = deep_format(&mut store, *variant, |link| link.is_full(), true, true)?;
+      let deep_structure = deep_format(&mut store, *variant, |link| link.is_partial(), true, true)?;
       println!("{deep_structure}");
     }
   }
