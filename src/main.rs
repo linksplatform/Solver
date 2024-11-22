@@ -304,12 +304,15 @@ fn main() -> Result<(), Error<usize>> {
   let args = vec![x, y];
 
   // Specify the length of the sequences you want (e.g., 1 to 16)
-  let max_seq_length = 4; // Change this as needed
+  let max_seq_length = 8; // Change this as needed
 
   // Generate all possible sequences of `1` and `2` with the specified length
   let sequences: Vec<Vec<usize>> = (1..=max_seq_length)
-    .flat_map(|length| args.iter().cloned().combinations_with_replacement(length))
-    .collect();
+  .flat_map(|length| {
+      let pools = vec![args.iter().cloned(); length];
+      pools.into_iter().multi_cartesian_product()
+  })
+  .collect();
 
   println!("Total sequences: {}", sequences.len());
   for seq in &sequences {
