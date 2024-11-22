@@ -4,6 +4,7 @@ use doublets::{
 use itertools::Itertools;
 use std::{collections::HashSet, fmt::Write};
 use tap::Pipe;
+use std::io::Read;
 
 #[rustfmt::skip]
 const CATALAN_NUMBERS: [u64; 25] = [
@@ -318,6 +319,10 @@ fn main() -> Result<(), Error<usize>> {
     println!("{}", seq_string);
   }
 
+  // ask user to continue
+  println!("Press any key to continue...");
+  let _ = std::io::stdin().read(&mut [0u8]).unwrap();
+
   // Use the generated sequences to create variants
   for seq in sequences {
     let result = all_seq_variants(&mut store, &seq)?;
@@ -348,6 +353,8 @@ fn main() -> Result<(), Error<usize>> {
         (true, true),
       ];
 
+      let mut resultVec = vec![];
+
       // Loop through each combination
       for &(x_value, y_value) in &combinations {
         // Compute the final NAND result by traversing the entire expression tree for the current combination
@@ -366,7 +373,13 @@ fn main() -> Result<(), Error<usize>> {
 
         // Print the final expression and the result of NAND evaluation
         println!("{expression} = {nand_result}");
+
+        // Store the result in a vector
+        resultVec.push(nand_result);
       }
+
+      // print expression and resultVec
+      println!("{base_expression} = {resultVec:?}");
 
       println!();
     }
