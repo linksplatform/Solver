@@ -17,6 +17,12 @@ rustup toolchain install nightly-2022-08-22 && cargo +nightly-2022-08-22 build
 cargo run
 ```
 
+## Save result to file
+
+```bash
+cargo run 2>&1 | tee result.txt
+```
+
 ## Troubleshooting
 
 If you get error:
