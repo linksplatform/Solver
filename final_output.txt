@@ -1,0 +1,46 @@
+   Compiling solver v0.1.0 (/tmp/gh-issue-solver-1757568396913)
+    Finished dev [unoptimized + debuginfo] target(s) in 2.06s
+     Running `target/debug/solver`
+Generating all possible functions with 1-bit sized argument
+==========================================================
+Truth table for all possible 1-bit functions:
+Input | F0 | F1 | F2 | F3
+------|----|----|----|----|
+  0   | 0 | 0 | 1 | 1 |
+  1   | 0 | 1 | 0 | 1 |
+
+Function F0: Constant 0 -> Truth table: [false, false]
+Function F1: Identity -> Truth table: [false, true]
+Function F2: NOT -> Truth table: [true, false]
+Function F3: Constant 1 -> Truth table: [true, true]
+
+Implementing each function using NAND gates:
+============================================
+F0 (Constant 0): ((x ↑ (x ↑ x)) ↑ (x ↑ (x ↑ x)))
+   Verification:
+     Input: 0 -> Expected: 0 -> Actual: 0 ✓
+     Input: 1 -> Expected: 0 -> Actual: 0 ✓
+   ✓ Implementation is correct!
+
+F1 (Identity): (x ↑ x) ↑ (x ↑ x)
+   Verification:
+     Input: 0 -> Expected: 0 -> Actual: 0 ✓
+     Input: 1 -> Expected: 1 -> Actual: 1 ✓
+   ✓ Implementation is correct!
+
+F2 (NOT): x ↑ x
+   Verification:
+     Input: 0 -> Expected: 1 -> Actual: 1 ✓
+     Input: 1 -> Expected: 0 -> Actual: 0 ✓
+   ✓ Implementation is correct!
+
+F3 (Constant 1): x ↑ (x ↑ x)
+   Verification:
+     Input: 0 -> Expected: 1 -> Actual: 1 ✓
+     Input: 1 -> Expected: 1 -> Actual: 1 ✓
+   ✓ Implementation is correct!
+
+Summary:
+========
+All 4 possible functions with 1-bit argument have been generated and implemented using NAND gates.
+These represent the complete set of boolean functions for a single input variable.
