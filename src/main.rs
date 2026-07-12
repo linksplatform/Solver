@@ -1,126 +1,121 @@
-// All 1-bit boolean function generator
-// This program generates and implements all possible functions with 1-bit sized argument using NAND gates
+use std::fmt;
 
-/// Performs a NAND operation on two boolean inputs.
+const INPUT_COUNT: usize = 2;
+const FUNCTION_COUNT: usize = 1 << INPUT_COUNT;
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+enum Expression {
+  Input,
+  Nand(Box<Expression>, Box<Expression>),
+}
+
+impl Expression {
+  fn nand(left: &Self, right: &Self) -> Self {
+    Self::Nand(Box::new(left.clone()), Box::new(right.clone()))
+  }
+}
+
+impl fmt::Display for Expression {
+  fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+    match self {
+      Self::Input => formatter.write_str("x"),
+      Self::Nand(left, right) => write!(formatter, "({left} ↑ {right})"),
+    }
+  }
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+struct Function {
+  outputs: [bool; INPUT_COUNT],
+  expression: Expression,
+  nand_count: usize,
+}
+
+fn nand(left: bool, right: bool) -> bool {
+  !(left && right)
+}
+
+fn combine(left: &Function, right: &Function) -> Function {
+  Function {
+    outputs: [
+      nand(left.outputs[0], right.outputs[0]),
+      nand(left.outputs[1], right.outputs[1]),
+    ],
+    expression: Expression::nand(&left.expression, &right.expression),
+    nand_count: left.nand_count + right.nand_count + 1,
+  }
+}
+
+fn truth_table_index(outputs: [bool; INPUT_COUNT]) -> usize {
+  usize::from(outputs[0]) | (usize::from(outputs[1]) << 1)
+}
+
+/// Exhaustively combines known expressions with NAND until every truth table is found.
 ///
-/// # Arguments
-///
-/// * `a` - A boolean input.
-/// * `b` - A boolean input.
-///
-/// # Returns
-///
-/// * A boolean output representing the NAND operation on the inputs.
-fn nand(a: bool, b: bool) -> bool {
-  !(a && b)
+/// Candidates are considered in increasing NAND-gate count, so the first expression
+/// stored for each truth table is also one of its smallest NAND implementations.
+fn generate_all_functions() -> [Function; FUNCTION_COUNT] {
+  let input = Function {
+    outputs: [false, true],
+    expression: Expression::Input,
+    nand_count: 0,
+  };
+  let mut functions: [Option<Function>; FUNCTION_COUNT] = std::array::from_fn(|_| None);
+  let input_index = truth_table_index(input.outputs);
+  functions[input_index] = Some(input);
+
+  for nand_count in 1.. {
+    let known: Vec<Function> = functions.iter().flatten().cloned().collect();
+    let mut discovered = Vec::new();
+
+    for left in &known {
+      for right in &known {
+        if left.nand_count + right.nand_count + 1 != nand_count {
+          continue;
+        }
+        let candidate = combine(left, right);
+        let index = truth_table_index(candidate.outputs);
+        if functions[index].is_none()
+          && !discovered
+            .iter()
+            .any(|function: &Function| function.outputs == candidate.outputs)
+        {
+          discovered.push(candidate);
+        }
+      }
+    }
+
+    for function in discovered {
+      let index = truth_table_index(function.outputs);
+      functions[index] = Some(function);
+    }
+    if functions.iter().all(Option::is_some) {
+      break;
+    }
+  }
+
+  functions.map(Option::unwrap)
 }
 
-
-/// Evaluates a function with the given truth table for a 1-bit input
-fn evaluate_function(input: bool, truth_table: &[bool]) -> bool {
-  truth_table[if input { 1 } else { 0 }]
-}
-
-/// Implements constant 0 using NAND gates: x AND (NOT x) = false always
-fn constant_zero_nand(x: bool) -> bool {
-  let not_x = nand(x, x);          // NOT x
-  let result = nand(x, not_x);     // x NAND (NOT x) = NOT(x AND NOT x) = NOT(false) = true
-  nand(result, result)             // NOT(true) = false
-}
-
-/// Implements identity using NAND gates: NOT(NOT x) = x
-fn identity_nand(x: bool) -> bool {
-  let not_x = nand(x, x);          // NOT x
-  nand(not_x, not_x)               // NOT(NOT x) = x
-}
-
-/// Implements NOT using NAND gates: x NAND x = NOT x
-fn not_nand(x: bool) -> bool {
-  nand(x, x)
-}
-
-/// Implements constant 1 using NAND gates: x NAND (NOT x) = true always
-fn constant_one_nand(x: bool) -> bool {
-  let not_x = nand(x, x);          // NOT x
-  nand(x, not_x)                   // x NAND (NOT x) = NOT(x AND NOT x) = NOT(false) = true
+fn bit(value: bool) -> u8 {
+  u8::from(value)
 }
 
 fn main() {
-  println!("Generating all possible functions with 1-bit sized argument");
-  println!("==========================================================");
-  
-  // For a single boolean input, there are exactly 4 possible functions
-  let functions = [
-    ("Constant 0", vec![false, false]),    // Always returns false
-    ("Identity",   vec![false, true]),     // Returns input value  
-    ("NOT",        vec![true, false]),     // Returns !input
-    ("Constant 1", vec![true, true]),      // Always returns true
-  ];
-  
-  println!("Truth table for all possible 1-bit functions:");
-  println!("Input | F0 | F1 | F2 | F3");
-  println!("------|----|----|----|----|");
-  println!("  0   | {} | {} | {} | {} |", 
-    if functions[0].1[0] { 1 } else { 0 },
-    if functions[1].1[0] { 1 } else { 0 },
-    if functions[2].1[0] { 1 } else { 0 },
-    if functions[3].1[0] { 1 } else { 0 }
-  );
-  println!("  1   | {} | {} | {} | {} |", 
-    if functions[0].1[1] { 1 } else { 0 },
-    if functions[1].1[1] { 1 } else { 0 },
-    if functions[2].1[1] { 1 } else { 0 },
-    if functions[3].1[1] { 1 } else { 0 }
-  );
-  println!();
-  
-  for (i, (name, truth_table)) in functions.iter().enumerate() {
-    println!("Function F{}: {} -> Truth table: {:?}", i, name, truth_table);
+  let functions = generate_all_functions();
+
+  println!("All {FUNCTION_COUNT} possible functions of one Boolean argument:");
+  println!("F | f(0) | f(1) | NAND gates | expression");
+  println!("--|------|------|------------|-----------");
+  for (index, function) in functions.iter().enumerate() {
+    println!(
+      "{index} |   {}  |   {}  |      {}     | {}",
+      bit(function.outputs[0]),
+      bit(function.outputs[1]),
+      function.nand_count,
+      function.expression,
+    );
   }
-  
-  println!();
-  println!("Implementing each function using NAND gates:");
-  println!("============================================");
-  
-  let nand_implementations = [
-    ("F0 (Constant 0)", "((x ↑ (x ↑ x)) ↑ (x ↑ (x ↑ x)))", constant_zero_nand as fn(bool) -> bool),
-    ("F1 (Identity)", "(x ↑ x) ↑ (x ↑ x)", identity_nand as fn(bool) -> bool),
-    ("F2 (NOT)", "x ↑ x", not_nand as fn(bool) -> bool), 
-    ("F3 (Constant 1)", "x ↑ (x ↑ x)", constant_one_nand as fn(bool) -> bool),
-  ];
-  
-  for (i, (name, expression, implementation)) in nand_implementations.iter().enumerate() {
-    println!("{}: {}", name, expression);
-    println!("   Verification:");
-    
-    let mut correct = true;
-    for input in [false, true] {
-      let expected = evaluate_function(input, &functions[i].1);
-      let actual = implementation(input);
-      let input_str = if input { 1 } else { 0 };
-      let expected_str = if expected { 1 } else { 0 };
-      let actual_str = if actual { 1 } else { 0 };
-      
-      if expected == actual {
-        println!("     Input: {} -> Expected: {} -> Actual: {} ✓", input_str, expected_str, actual_str);
-      } else {
-        println!("     Input: {} -> Expected: {} -> Actual: {} ✗", input_str, expected_str, actual_str);
-        correct = false;
-      }
-    }
-    
-    if correct {
-      println!("   ✓ Implementation is correct!");
-    } else {
-      println!("   ✗ Implementation has errors!");
-    }
-    println!();
-  }
-  
-  println!("Summary:");
-  println!("========");
-  println!("All 4 possible functions with 1-bit argument have been generated and implemented using NAND gates.");
-  println!("These represent the complete set of boolean functions for a single input variable.");
 }
 
 #[cfg(test)]
@@ -128,61 +123,39 @@ mod tests {
   use super::*;
 
   #[test]
-  fn test_nand() {
-    assert_eq!(nand(false, false), true);
-    assert_eq!(nand(false, true), true);
-    assert_eq!(nand(true, false), true);
-    assert_eq!(nand(true, true), false);
+  fn nand_has_the_expected_truth_table() {
+    assert!(nand(false, false));
+    assert!(nand(false, true));
+    assert!(nand(true, false));
+    assert!(!nand(true, true));
   }
 
   #[test]
-  fn test_constant_zero() {
-    assert_eq!(constant_zero_nand(false), false);
-    assert_eq!(constant_zero_nand(true), false);
+  fn generates_every_possible_function_exactly_once() {
+    let functions = generate_all_functions();
+    let outputs: Vec<_> = functions.iter().map(|function| function.outputs).collect();
+
+    assert_eq!(
+      outputs,
+      vec![[false, false], [true, false], [false, true], [true, true]]
+    );
   }
 
   #[test]
-  fn test_identity() {
-    assert_eq!(identity_nand(false), false);
-    assert_eq!(identity_nand(true), true);
-  }
+  fn finds_smallest_nand_implementations() {
+    let functions = generate_all_functions();
+    let gate_counts: Vec<_> = functions
+      .iter()
+      .map(|function| function.nand_count)
+      .collect();
 
-  #[test]
-  fn test_not() {
-    assert_eq!(not_nand(false), true);
-    assert_eq!(not_nand(true), false);
-  }
-
-  #[test]
-  fn test_constant_one() {
-    assert_eq!(constant_one_nand(false), true);
-    assert_eq!(constant_one_nand(true), true);
-  }
-
-  #[test]
-  fn test_all_functions() {
-    let functions = [
-      ("Constant 0", vec![false, false]),
-      ("Identity",   vec![false, true]),
-      ("NOT",        vec![true, false]),
-      ("Constant 1", vec![true, true]),
-    ];
-
-    let implementations = [
-      constant_zero_nand as fn(bool) -> bool,
-      identity_nand as fn(bool) -> bool,
-      not_nand as fn(bool) -> bool,
-      constant_one_nand as fn(bool) -> bool,
-    ];
-
-    for (i, (name, truth_table)) in functions.iter().enumerate() {
-      for input in [false, true] {
-        let expected = evaluate_function(input, truth_table);
-        let actual = implementations[i](input);
-        assert_eq!(actual, expected, 
-          "Function {} failed for input {}: expected {}, got {}", 
-          name, input, expected, actual);
-      }
-    }
+    assert_eq!(gate_counts, vec![5, 1, 0, 2]);
+    assert_eq!(
+      functions[0].expression.to_string(),
+      "(((x ↑ x) ↑ x) ↑ ((x ↑ x) ↑ x))"
+    );
+    assert_eq!(functions[1].expression.to_string(), "(x ↑ x)");
+    assert_eq!(functions[2].expression.to_string(), "x");
+    assert_eq!(functions[3].expression.to_string(), "((x ↑ x) ↑ x)");
   }
 }
