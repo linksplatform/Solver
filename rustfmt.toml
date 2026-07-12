@@ -3,3 +3,5 @@ error_on_unformatted = true
 version = "Two"
 
 imports_granularity = "Crate"
+
+tab_spaces = 2

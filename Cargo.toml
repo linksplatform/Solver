@@ -4,6 +4,6 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+itertools = "0.10"
 tap = { version = "1.0.1" }
-
 doublets = { git = "https://github.com/linksplatform/doublets-rs" }
