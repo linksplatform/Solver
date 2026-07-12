@@ -1,10 +1,9 @@
-use doublets::{
-  data::LinkType, mem, mem::RawMem, unit, unit::LinkPart, Doublets, DoubletsExt, Error, Link, Links,
-};
+use doublets::{mem, mem::RawMem, unit, unit::LinkPart, Doublets, DoubletsExt, Error, Link, Links};
 use itertools::Itertools;
+use platform_num::LinkReference;
+use std::io::Read;
 use std::{collections::HashSet, fmt::Write};
 use tap::Pipe;
-use std::io::Read;
 
 #[rustfmt::skip]
 const CATALAN_NUMBERS: [u64; 25] = [
@@ -19,7 +18,7 @@ const fn catalan(n: usize) -> u64 {
 
 fn spec_all_variants<T, S>(store: &mut S, seq: &[T]) -> Result<Vec<T>, Error<T>>
 where
-  T: LinkType,
+  T: LinkReference,
   S: Doublets<T>,
 {
   assert!(seq.len() > 2);
@@ -42,7 +41,7 @@ where
 
 fn all_seq_variants<T, S>(store: &mut S, seq: &[T]) -> Result<Vec<T>, Error<T>>
 where
-  T: LinkType,
+  T: LinkReference,
   S: Doublets<T>,
 {
   match seq {
@@ -71,12 +70,13 @@ fn nand(a: bool, b: bool) -> bool {
   !(a && b)
 }
 
+#[cfg_attr(not(test), allow(dead_code))]
 fn get_link_by_id<T>(
   store: &mut unit::Store<usize, T>,
   id: usize,
 ) -> Result<Link<usize>, Error<usize>>
 where
-  T: RawMem<LinkPart<usize>>,
+  T: RawMem<Item = LinkPart<usize>>,
 {
   // `any` constant denotes any link
   let any = store.constants().any;
@@ -100,7 +100,7 @@ pub fn deep_format<T, S>(
   render_debug: bool,
 ) -> Result<String, Error<T>>
 where
-  T: LinkType,
+  T: LinkReference,
   S: Doublets<T>,
 {
   let mut sb = String::new();
@@ -119,6 +119,7 @@ where
   Ok(sb)
 }
 
+#[allow(clippy::too_many_arguments)]
 fn append_structure<T, S>(
   store: &mut S,
   sb: &mut String,
@@ -131,7 +132,7 @@ fn append_structure<T, S>(
   render_debug: bool,
 ) -> Result<(), Error<T>>
 where
-  T: LinkType,
+  T: LinkReference,
   S: Doublets<T>,
 {
   let constants = store.constants();
@@ -213,7 +214,7 @@ fn append_index<T>(
   is_visited: bool,
   render_debug: bool,
 ) where
-  T: LinkType,
+  T: LinkReference,
 {
   if render_debug {
     if is_missing {
@@ -236,7 +237,7 @@ fn apply_nand_to_structure<T, S>(
   y_value: bool,
 ) -> Result<bool, Error<T>>
 where
-  T: LinkType,
+  T: LinkReference,
   S: Doublets<T>,
 {
   // Fetch the link (assume it's guaranteed to exist)
@@ -248,7 +249,6 @@ where
     return Ok(x_value);
   } else if link.index == y_placeholder_link {
     return Ok(y_value);
-  } else {
   }
 
   // If the link source is the x or y placeholder, substitute the values
@@ -296,23 +296,23 @@ fn main() -> Result<(), Error<usize>> {
   let link_type = store.create_point()?;
 
   let x = store.create_point()?;
-  store.update(x, x, link_type);
+  store.update(x, x, link_type)?;
   let y = store.create_point()?;
-  store.update(y, y, link_type);
+  store.update(y, y, link_type)?;
 
   // Define the two links
-  let args = vec![x, y];
+  let args = [x, y];
 
   // Specify the length of the sequences you want (e.g., 1 to 16)
   let max_seq_length = 8; // Change this as needed
 
   // Generate all possible sequences of `1` and `2` with the specified length
   let sequences: Vec<Vec<usize>> = (1..=max_seq_length)
-  .flat_map(|length| {
+    .flat_map(|length| {
       let pools = vec![args.iter().cloned(); length];
       pools.into_iter().multi_cartesian_product()
-  })
-  .collect();
+    })
+    .collect();
 
   println!("Total sequences: {}", sequences.len());
   for seq in &sequences {
@@ -349,25 +349,18 @@ fn main() -> Result<(), Error<usize>> {
       println!("expression: {base_expression}");
 
       // Define all possible combinations of x_value and y_value
-      let combinations = [
-        (false, false),
-        (false, true),
-        (true, false),
-        (true, true),
-      ];
+      let combinations = [(false, false), (false, true), (true, false), (true, true)];
 
-      let mut resultVec = vec![];
+      let mut result_vec = vec![];
 
       // Loop through each combination
       for &(x_value, y_value) in &combinations {
         // Compute the final NAND result by traversing the entire expression tree for the current combination
         let nand_result = apply_nand_to_structure(
-            &mut store,
-            *variant,
-            x,       // x_placeholder_link
-            y,       // y_placeholder_link
-            x_value, // current x_value
-            y_value, // current y_value
+          &mut store, *variant, x,       // x_placeholder_link
+          y,       // y_placeholder_link
+          x_value, // current x_value
+          y_value, // current y_value
         )?;
 
         // Replace placeholders in the expression with the current x_value and y_value
@@ -378,11 +371,11 @@ fn main() -> Result<(), Error<usize>> {
         println!("{expression} = {nand_result}");
 
         // Store the result in a vector
-        resultVec.push(nand_result);
+        result_vec.push(nand_result);
       }
 
-      // print expression and resultVec
-      println!("{base_expression} = {resultVec:?}");
+      // print expression and result vector
+      println!("{base_expression} = {result_vec:?}");
 
       println!();
     }
@@ -411,10 +404,20 @@ mod tests {
 
   #[test]
   fn test_nand() {
+    assert!(nand(false, false));
+    assert!(nand(false, true));
+    assert!(nand(true, false));
+    assert!(!nand(true, true));
+  }
 
-    assert_eq!(nand(false, false), true);
-    assert_eq!(nand(false, true), true);
-    assert_eq!(nand(true, false), true);
-    assert_eq!(nand(true, true), false);
+  #[test]
+  fn get_link_by_id_returns_existing_link() -> Result<(), Error<usize>> {
+    let mem = mem::Global::new();
+    let mut store = unit::Store::<usize, _>::new(mem)?;
+    let id = store.create_point()?;
+
+    assert_eq!(get_link_by_id(&mut store, id)?.index, id);
+
+    Ok(())
   }
 }

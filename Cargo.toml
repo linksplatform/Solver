@@ -6,4 +6,5 @@ edition = "2021"
 [dependencies]
 itertools = "0.10"
 tap = { version = "1.0.1" }
-doublets = { git = "https://github.com/linksplatform/doublets-rs" }
+doublets = "0.4.0"
+platform-num = "0.8.0"
